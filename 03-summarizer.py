@@ -50,9 +50,12 @@ def main(input_data_path, token_keys_path, output_data_path):
 
     # filter articles by content
     # prompt = "To summarize in a short paragraph under 70 tokens, the main undesirable consequence of <domain> being discussed here:"
-    prompt = '''
-    You goal is to inspire users to be more aware of undesirable consequences of digital technologies, using insights from the below input text.
-    Summarize the undesirable consequence of the technology from the paper for lay audience under 70 tokens.
+    prompt = '''You goal is to inspire users to be more aware of undesirable consequences of digital technologies, using insights from the below input text.
+Summarize the undesirable consequence of the technology from the article for lay audience under 70 tokens.
+
+"{text}"
+
+Undesirable consequence:
     '''
     summarized_articles = summarize(articles, prompt)
 

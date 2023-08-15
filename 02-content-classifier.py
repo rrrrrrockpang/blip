@@ -18,7 +18,7 @@ def load_token_keys(path):
     
 
 def get_filter_prompt():
-    return "Does the article above discuss unintended or undesirable consequences of <domain> on society? Answer only Yes or No."
+    return "Does the article discuss unintended or undesirable consequences of <domain> on society? Answer only Yes or No.\n\n\"{text}\""
 
 
 def complete(prompt):

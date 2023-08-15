@@ -82,6 +82,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if os.path.exists(args.output_data_path):
-        logging.error("Output path already exists. Exiting...")
+        logging.error("Title Classifying... Output path already exists. Exiting...")
     else:
         main(args.articles, args.model_path, args.output_data_path)

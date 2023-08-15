@@ -57,8 +57,8 @@ def main(input_data_path, token_keys_path, output_data_path):
     summarized_articles = summarize(articles, prompt)
 
     # save filtered articles
-    # with open(output_data_path, "wb") as f:
-    #     pickle.dump(summarized_articles, f)
+    with open(output_data_path, "wb") as f:
+        pickle.dump(summarized_articles, f)
 
     print("Done!")
     print("Saved to {}".format(output_data_path))
@@ -73,6 +73,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if os.path.exists(args.output_data_path):
-        logging.error("Output path already exists. Exiting...")
+        logging.error("Summarizing... Output path already exists. Exiting...")
     else:
         main(args.input_data_path, args.token_keys, args.output_data_path)

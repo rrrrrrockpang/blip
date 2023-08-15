@@ -99,6 +99,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if os.path.exists(args.output_data_path):
-        logging.error("Output path already exists. Exiting...")
+        logging.error("Content Classifying... Output path already exists. Exiting...")
     else:
         main(args.input_data_path, args.token_keys, args.output_data_path)

@@ -7,6 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from newspaper import Article
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, TextClassificationPipeline
+from helper import llmRequester
 
 app = FastAPI()
 # app.mount("/", StaticFiles(directory="website"), name="website")
@@ -83,11 +84,13 @@ def complete(prompt):
 
 
 def run_content_classifier(text, domain):
-    OPENAI_API_KEY = load_token_keys(token_keys_path)['OPENAI_API_KEY']
-    openai.api_key = OPENAI_API_KEY
+    # OPENAI_API_KEY = load_token_keys(token_keys_path)['OPENAI_API_KEY']
+    # openai.api_key = OPENAI_API_KEY
+    lr = llmRequester()
     prompt = "Does the article above discuss unintended or undesirable consequences of <domain> on society? Note specifically about <domain>. Answer only Yes or No."
     try:
-        answer = complete("{} \n\n{}".format(text, prompt.replace("<domain>", domain)))
+        # answer = complete("{} \n\n{}".format(text, prompt.replace("<domain>", domain)))
+        lr.run_llama(prompt=prompt.replace("<domain>", domain), text=text)
     except:
         answer = "The article is too long to be processed by GPT-3."
     
@@ -98,25 +101,37 @@ def run_content_classifier(text, domain):
 
 
 def run_summarizer(text, domain):
-    OPENAI_API_KEY = load_token_keys(token_keys_path)['OPENAI_API_KEY']
-    openai.api_key = OPENAI_API_KEY
-    prompt = "To summarize in a short paragraph under 70 tokens, the main undesirable consequence of <domain> being discussed here:"
-    answer = complete("{} \n\n{}".format(text, prompt.replace("<domain>", domain)))
+    # OPENAI_API_KEY = load_token_keys(token_keys_path)['OPENAI_API_KEY']
+    # openai.api_key = OPENAI_API_KEY
+    lr = llmRequester()
+    # prompt = "To summarize in a short paragraph under 70 tokens, the main undesirable consequence of <domain> being discussed here:"
+    prompt = '''You goal is to inspire users to be more aware of undesirable consequences of <domain>, using insights from the below input text.
+Summarize the undesirable consequence of the technology from the article for lay audience under 70 tokens.'''
+    # answer = complete("{} \n\n{}".format(text, prompt.replace("<domain>", domain)))
+    answer = lr.run_llama(prompt=prompt.replace("<domain>", domain), text=text)
     return answer
 
     
 def run_aspect_classifier(title, summary, domain):
-    OPENAI_API_KEY = load_token_keys(token_keys_path)['OPENAI_API_KEY']
-    openai.api_key = OPENAI_API_KEY
-    prompt = "List of possible aspects: Health & Well-being, Security & Privacy, Equality & Justice, User Experience, Economy, Access to Information & Discourse, Environment & Sustainability, Politics, Power Dynamics, Social Norms & Relationship. \n" + \
-            "Which one aspect of life does the following consequence affect? (Please only select one) \n" + \
-            "Title: <title> \n" + "Summary: <summary> \n" + "Aspect: "
-    answer = complete("{}".format(prompt.replace("<title>", title).replace("<summary>", summary)))
+    # OPENAI_API_KEY = load_token_keys(token_keys_path)['OPENAI_API_KEY']
+    # openai.api_key = OPENAI_API_KEY
+    lr = llmRequester()
+    prompt = '''List of possible domain: Health & Well-being, Security & Privacy, Equality & Justice, User Experience, Economy, Access to Information & Discourse, Environment & Sustainability, Politics, Power Dynamics, Social Norms & Relationship. 
+
+Which one aspect of life does the following consequence affect? (Please only select one)
+    
+Summary of the consequence: "{text}"
+
+One Aspect ((Please only select one from above):'''
+    # prompt = "List of possible aspects: Health & Well-being, Security & Privacy, Equality & Justice, User Experience, Economy, Access to Information & Discourse, Environment & Sustainability, Politics, Power Dynamics, Social Norms & Relationship. \n" + \
+    #         "Which one aspect of life does the following consequence affect? (Please only select one) \n" + \
+    #         "Title: <title> \n" + "Summary: <summary> \n" + "Aspect: "
+    # answer = complete("{}".format(prompt.replace("<title>", title).replace("<summary>", summary)))
+    answer = lr.run_llama(prompt=prompt, text=summary)
     return answer
 
 @app.post("/request")
 def process(article: ArticleRequest):
-    print("???")
     fetched_article = fetch_article(article.url)
     
     is_title_relevant = run_title_classifier(fetched_article['title'])
@@ -144,15 +159,16 @@ def fetch_article(url):
     }
     # return ArticleResponse(title=a.title, text=a.text, publish_date=str(a.publish_date))
 
-# from apscheduler.schedulers.background import BackgroundScheduler
-# import subprocess
+from apscheduler.schedulers.background import BackgroundScheduler
+import subprocess
 
-# scheduler = BackgroundScheduler()
-# def call_script():
-#     subprocess.run(['/bin/bash', './run.sh'])
-# scheduler.add_job(call_script, 'cron', day_of_week='sun', hour=0, minute=0)
-# scheduler.add_job(call_script, 'interval', seconds=30)
-# scheduler.start()
+scheduler = BackgroundScheduler()
+def call_script():
+    subprocess.run(['/bin/bash', './run.sh'])
+call_script()
+# scheduler.add_job(call_script, 'cron', hour=0, minute=1)
+# scheduler.add_job(call_script, 'interval', seconds=300)
+scheduler.start()
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

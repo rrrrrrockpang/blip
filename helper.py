@@ -88,11 +88,9 @@ class llmRequester:
     
     def run_llama(self, prompt, text):
         llama = self.configure_llama()
-        template = prompt + "\n" + "\"{text}\""
-        if self.prompt == None:
-            self.prompt = PromptTemplate(template=template, input_variables=["text"])
-        if self.llm_chain == None:
-            self.llm_chain = LLMChain(prompt=self.prompt, llm=llama)
+        
+        self.prompt = PromptTemplate(template=prompt, input_variables=["text"])    
+        self.llm_chain = LLMChain(prompt=self.prompt, llm=llama)
         answer = self.llm_chain.run(text)
         
         return answer

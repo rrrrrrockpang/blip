@@ -4,6 +4,8 @@ import tqdm
 import pandas as pd
 import pickle
 import argparse
+import os
+from helper import llmRequester
 
 def read_db(db_path):
     with open(db_path, "rb") as f:
@@ -35,6 +37,8 @@ def complete(prompt):
 
 def filter_by_content(articles, prompt):
     rows = []
+
+    lr = llmRequester()
     for article in tqdm.tqdm(articles):
         if article['prediction'] == 'LABEL_0_irrelevant':
             continue
@@ -42,7 +46,8 @@ def filter_by_content(articles, prompt):
         text = article['text']
         if len(text) > 13000:
             continue 
-        answer = complete("{} \n\n{}".format(text, prompt.replace("<domain>", article['sector'])))
+        # answer = complete("{} \n\n{}".format(text, prompt.replace("<domain>", article['sector'])))
+        answer = lr.run_llama(prompt=prompt.replace("<domain>", article['sector']), text=text)
 
         rows.append({
             'title': article['title'],
@@ -55,6 +60,7 @@ def filter_by_content(articles, prompt):
             'score': article['score'],
             'gpt3_filter_answer': answer
         })
+    
     return rows
 
 
@@ -65,8 +71,8 @@ def main(input_data_path, token_keys_path, output_data_path):
     articles = read_db(input_data_path)
 
     # load token keys
-    OPENAI_API_KEY = load_token_keys(token_keys_path)['OPENAI_API_KEY']
-    openai.api_key = OPENAI_API_KEY
+    # OPENAI_API_KEY = load_token_keys(token_keys_path)['OPENAI_API_KEY']
+    # openai.api_key = OPENAI_API_KEY
 
     # second filter by content using GPT-3
     print("Filtering articles by content...")
@@ -81,6 +87,10 @@ def main(input_data_path, token_keys_path, output_data_path):
 
 
 if __name__ == "__main__":
+    import logging
+    logging.getLogger().setLevel(logging.INFO)
+    logging.info("### Running content classifier ###")
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--input_data_path', required=True)
     parser.add_argument('--token_keys', required=True)
@@ -88,4 +98,7 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
 
-    main(args.input_data_path, args.token_keys, args.output_data_path)
+    if os.path.exists(args.output_data_path):
+        logging.error("Output path already exists. Exiting...")
+    else:
+        main(args.input_data_path, args.token_keys, args.output_data_path)

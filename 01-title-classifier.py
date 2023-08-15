@@ -70,7 +70,11 @@ def main(articles, model_path, output_data_path):
     
 
 if __name__ == "__main__":
+    import logging
     parser = argparse.ArgumentParser()
+    
+    logging.getLogger().setLevel(logging.INFO)
+    logging.info("### Running title classifier ###")
     # possible add a set to store the articles that have been read
     parser.add_argument('--articles', required=True)
     parser.add_argument('--model_path', required=True)

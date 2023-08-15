@@ -4,7 +4,7 @@ import argparse
 import pandas as pd
 from tqdm import tqdm
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, TextClassificationPipeline
-
+import os
 
 def read_db(path):
     with open(path, "rb") as f:
@@ -81,4 +81,7 @@ if __name__ == "__main__":
     parser.add_argument('--output_data_path', required=True)
     args = parser.parse_args()
 
-    main(args.articles, args.model_path, args.output_data_path)
+    if os.path.exists(args.output_data_path):
+        logging.error("Output path already exists. Exiting...")
+    else:
+        main(args.articles, args.model_path, args.output_data_path)

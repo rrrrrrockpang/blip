@@ -319,17 +319,119 @@ def main(article_set_pickle, articles, data_dir):
     with open(articles, "wb") as file:
         pickle.dump(dic, file, protocol=pickle.HIGHEST_PROTOCOL)
 
+import logging
+from newsapi import NewsApiClient
+from typing import Dict
+from datetime import datetime, timedelta
+
+class ArticleRequester():
+    def __init__(self, data_dir:str):
+        """Initialize the article requester with the data directory"""
+        logging.info("Article Requester initialized with data directory: {}".format(data_dir))
+        self.data_dir = data_dir
+        self.article_pickle = os.path.join(data_dir, "articles.pkl")
+        self.articles = self.init_db(self.article_pickle)
+
+        # Figure out dates
+        self.current_date = datetime.now()
+        self.seven_days_ago = self.current_date - timedelta(days=7)
+        logging.info("Current date: {}; Seven days ago: {}".format(self.current_date.strftime("%Y-%m-%d"), self.seven_days_ago.strftime("%Y-%m-%d")))
+        
+        self.queries = ['social media', 'voice assistants', 'virtual reality']
+
+        
+    def init_db(self, file_name):
+        # cold start, first deployment if statement
+        if not os.path.exists(file_name):
+            # If the file doesn't exist, create an empty dictionary
+            articles = {}
+            with open(file_name, "wb") as f:
+                pickle.dump(articles, f, protocol=pickle.HIGHEST_PROTOCOL)
+        
+        # load the database 
+        with open(file_name, "rb") as f:
+            articles = pickle.load(f)
+        return articles
+    
+    def fetch_from_news_api(self, keyword:str, from_date=str, to_date=str) -> Dict[str, str]:
+        """Fetch articles from newsapi.org"""
+        newsapi = NewsApiClient(api_key='12b234aeee694320a9feec1a38734663')
+        articles = all_articles = newsapi.get_everything(q=keyword, 
+                                                         domains='theverge.com,axios.com,wired.com,techcrunch.com,engadget.com,futurism.com',
+                                                         from_param=from_date,
+                                                         to=to_date,
+                                                         language='en',
+                                                         sort_by='relevancy')
+        return articles["articles"]
+
+    def get_article(self, article:Dict[str,str]) -> Dict[str, str]:
+        """Get the article from the returned article object from newsapi"""
+        # download and parse an article
+        try:
+            newspaperArticle = Article(article["url"])
+            newspaperArticle.download()
+            newspaperArticle.parse()
+
+            return {
+                'title': article["title"],
+                'text': newspaperArticle.text,
+                'source': article["source"]["name"],
+                'url': article["url"],
+                'published_at': "" if len(article["publishedAt"]) == 0 else article["publishedAt"]
+            }
+        
+        except Exception as e:
+            logging.error("Fetching Article Error: {}".format(e))
+            return None
+
+
+    def fetch(self):
+        """Fetch articles in the past week"""
+        logging.info("Fetching articles from {} to {}".format(self.seven_days_ago.strftime("%Y-%m-%d"), self.current_date.strftime("%Y-%m-%d")))
+
+        for query in self.queries:
+            logging.info("Fetching articles for {}".format(query))
+            articles = self.fetch_from_news_api(query, 
+                                                self.current_date.strftime("%Y-%m-%d"), 
+                                                self.seven_days_ago.strftime("%Y-%m-%d"))
+            
+            for article in articles:
+                if article["url"] in self.articles: 
+                    continue
+                # add and dump to data
+                article_path = slugify(article['title'].strip())
+                # update the article and get the sector namespace
+                element = self.get_article(article)
+                if element is None: continue
+                element["sector"] = query
+
+                with open(os.path.join(self.data_dir, article_path + '.json'), "w") as f:
+                    json.dump(element, f, indent=4, ensure_ascii=False)
+
+                self.articles[element["url"]] = element
+
+            self.update_db()
+
+    def update_db(self):
+        """Update the database"""
+        with open(self.article_pickle, "wb") as file:
+            pickle.dump(self.articles, file, protocol=pickle.HIGHEST_PROTOCOL)
+            
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--article_set_pickle', required=True)
-    parser.add_argument('--articles', required=True)
+    # parser.add_argument('--article_set_pickle', required=True)
+    # parser.add_argument('--articles', required=True)
     parser.add_argument('--data_dir', required=True)
     args = parser.parse_args()
+    logging.getLogger().setLevel(logging.INFO)
 
-    print("### Fetching ###")
-    main(
-        args.article_set_pickle,
-        args.articles,
-        args.data_dir
-    )
+    logging.info("### Fetching ###")
+    # main(
+    #     args.article_set_pickle,
+    #     args.articles,
+    #     args.data_dir
+    # )
+    ar = ArticleRequester(args.data_dir)
+    ar.fetch()

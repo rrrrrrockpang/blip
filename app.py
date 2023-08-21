@@ -1,18 +1,19 @@
 import openai
 import uvicorn
 import json
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 from newspaper import Article
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, TextClassificationPipeline
 from helper import llmRequester
 
 app = FastAPI()
-# app.mount("/", StaticFiles(directory="website"), name="website")
 
-@app.get("/")
+@app.get("/hello")
 async def root():
     return {"message": "Hello World"}
 
@@ -169,6 +170,14 @@ call_script()
 # scheduler.add_job(call_script, 'cron', hour=0, minute=1)
 # scheduler.add_job(call_script, 'interval', seconds=300)
 scheduler.start()
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+templates = Jinja2Templates(directory="templates")
+
+@app.get("/", response_class=HTMLResponse)
+async def display(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

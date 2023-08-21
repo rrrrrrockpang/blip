@@ -1,0 +1,14 @@
+/* Style the header */
+#homepage-logo-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 10vh; /* Set the header height to 10% of the viewport height */
+    background-color: #f0f0f0; /* Set a background color for the header */
+}
+
+/* Style the logo image */
+.logo-image {
+    max-width: 100%; /* Make sure the logo doesn't exceed the header width */
+    max-height: 80%; /* Adjust the height as needed */
+}

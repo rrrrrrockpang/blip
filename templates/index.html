@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>BLIP</title>
+        
+        <!-- Bootstrap core CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css">
+        
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&display=swap" rel="stylesheet"> 
+        
+        <link href="{{ url_for('static', path='/styles/logo.css')}}" rel="stylesheet">
+        <link href="{{ url_for('static', path='/styles/popup.css')}}" rel="stylesheet">
+        <link href="{{ url_for('static', path='/styles/import.css')}}" rel="stylesheet">
+
+    </head>
+    <body>
+        <!-- ########################### logo header ########################## -->
+        <header id="homepage-logo-header">
+            <img src="{{ url_for('static', path='/images/blip.png') }}" class="logo-image">
+        </header>
+
+        <!-- ########################### navbar ########################## -->
+        <div class="container-fluid mt-3">
+            <div class="row">
+                <!-- main -->
+                <div class="col-9 px-4">
+                    <div id="homepage-navbar" class="row  gy-2">
+                        <div class="col-3" id="domain-selector"></div>
+                        <div class="col-3" id="aspect-selector"></div>
+                        <div class="col-1" id="shuffle-button"></div>
+                        <div class="col-5" id="search-bar"></div>
+                    </div>
+                    <div id="allcards" class="row h-scroll" data-masonry='{"percentPosition": true}'></div>
+                </div>
+                
+                <!-- sidebar -->
+                <div class="col-3 px-4">
+                    <!-- TODO: probably need to remove this -->
+                    <div class="row" class="position-fixed" style="height: 80vh">
+                        <div id="bookmark-bar" ></div>
+                        <button class="btn btn-secondary mt-auto" id="articleBtn">Import An Article</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Popup container -->
+        <div id="popup-container">
+            <div id="popup-message">
+            <h4>BLIP</h4>
+            <div class="disclaimer">This is a research prototype. Our goal is to get external feedback to improve our system. It is not intended to give advice.</div>
+            <div class="disclaimer">BLIP employs large language models, the system may occasionally generate inaccurate summaries or inaccurate categorizations of online articles.</div>
+            <div class="disclaimer">Please contact us if you'd like to share your feedback or found any issues.</div>
+            
+            <button id="popup-close">Close</button>
+            </div>
+        </div>
+        
+        <div id="articleModal" class="modal">
+            <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3>Import An Article</h3>
+            <p>You can input an URL of an online article and select one of the domain. You'll be able to see the results run by our pipeline.</p>
+            <label for="url">Article URL:</label>
+            <input type="text" id="url" name="url">
+        
+            <div class="form-group row align-items-center">
+                <div class="col-sm-4 text-center">Or Input a PDF:</div>
+                <div class="col-sm-8">
+                <input type="file" class="form-control" id="pdf-input" accept="application/pdf" multiple>
+                </div>
+            </div>
+            
+                
+            <br>
+            <label for="domain">Domain:</label>
+            <select id="domain" name="domain">
+                <option value="social media">Social Media</option>
+                <option value="voice assistant">Voice Assistant</option>
+                <option value="virtual reality">Virtual Reality</option>
+            </select>
+            <div class="form-text">Can't find the domain you're looking for? <a href="#">Suggest it here</a>.</div>
+            <br>
+            <div id="results"></div>
+            <br>
+            <button id="submitButton" class="submit-button">Submit</button>
+            </div>
+        </div>
+        
+        <div id="alert" class="alert alert-success alert-dismissible fade show" style="display:none" role="alert">
+            Your suggestion has been submitted and received by us. We will evaluate it and push new changes to BLIP soon depending on term popularity.
+        </div>
+    </body>
+
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <!-- Load d3.js -->
+    <script src="https://d3js.org/d3.v7.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D" crossorigin="anonymous" async></script>
+
+    <script src="{{ url_for('static', path='/components/homepage-logo.js') }}"></script>
+    <script src="{{ url_for('static', path='/components/safety-popup.js') }}"></script>
+    <script src="{{ url_for('static', path='/components/blip.js') }}"></script>
+    <script src="{{ url_for('static', path='/components/article.js') }}"></script>
+</html>

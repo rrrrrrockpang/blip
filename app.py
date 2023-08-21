@@ -10,6 +10,7 @@ from pydantic import BaseModel
 from newspaper import Article
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, TextClassificationPipeline
 from helper import llmRequester
+import os
 
 app = FastAPI()
 
@@ -36,6 +37,9 @@ class ArticleResponse(BaseModel):
     title: str
     text: str
     publish_date: str
+
+class SearchRequest(BaseModel):
+    query: str
 
 
 def load_token_keys(path):
@@ -159,6 +163,78 @@ def fetch_article(url):
         "publish_date": str(a.publish_date)
     }
     # return ArticleResponse(title=a.title, text=a.text, publish_date=str(a.publish_date))
+
+# semantic search
+from transformers import AutoTokenizer, AutoModel
+import torch
+from datasets import Dataset 
+import pandas as pd
+
+model_ckpt = "sentence-transformers/all-MiniLM-L6-v2"
+tokenizer = AutoTokenizer.from_pretrained(model_ckpt)
+model = AutoModel.from_pretrained(model_ckpt)
+
+device = torch.device("cpu")
+model.to(device)
+
+def cls_pooling(model_output):
+    return model_output.last_hidden_state[:, 0]
+
+def get_embeddings(text_list):
+    encoded_input = tokenizer(
+        text_list, padding=True, truncation=True, return_tensors="pt"
+    )
+    encoded_input = {k: v.to(device) for k, v in encoded_input.items()}
+    model_output = model(**encoded_input)
+    return cls_pooling(model_output)
+
+from datasets import load_from_disk
+def build_vector_store():
+    vector_path = "static/data/vectors"
+    if os.path.exists(vector_path):
+        embeddings_dataset = load_from_disk(vector_path)
+        embeddings_dataset.add_faiss_index(column="embeddings")
+        return embeddings_dataset
+
+    with open("static/data/aspect.json", "r") as f:
+        aspects = json.load(f)
+        lst = []
+        for aspect in aspects:
+            lst.append("Title: {}\n\nAbstract: {}".format(
+                    aspect['title'], aspect['abstract']))
+
+    rows = [{"text": i} for i in lst]
+
+    df = Dataset.from_pandas(pd.DataFrame(rows))
+    embeddings_dataset = df.map(
+        lambda x: {"embeddings": get_embeddings(x["text"]).detach().cpu().numpy()[0]}
+    )
+    
+    if not os.path.exists(vector_path):
+        embeddings_dataset.save_to_disk(vector_path)
+    embeddings_dataset.add_faiss_index(column="embeddings")
+    return embeddings_dataset
+
+embeddings_dataset = build_vector_store()
+os.environ['KMP_DUPLICATE_LIB_OK']='True'
+@app.post("/search")
+def search(searchRequest: SearchRequest):
+    question_embedding = get_embeddings([searchRequest.query]).cpu().detach().numpy()
+    print("....")
+    scores, samples = embeddings_dataset.get_nearest_examples(
+        "embeddings", question_embedding, k=10
+    )
+    print("?")
+    samples_df = pd.DataFrame.from_dict(samples)
+    samples_df["scores"] = scores
+    print("??")
+    samples_df.sort_values("scores", ascending=False, inplace=True)
+    print("???")
+    
+    for _, row in samples_df.iterrows():
+        print("__________ {} __________".format(_))
+        print(row.text)
+        print()
 
 from apscheduler.schedulers.background import BackgroundScheduler
 import subprocess

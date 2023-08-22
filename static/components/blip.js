@@ -8,7 +8,7 @@ FILE_DICT = {
     'va': '/static/data/new_va_summs1.csv',
     'vr': '/static/data/new_vr_summs1.csv',
     // 'all': '/static/data/overall.csv'
-    'all': '/static/data/output.csv'
+    'all': '/static/data/merged.csv'
 }
 
 let mainTech = "";
@@ -17,25 +17,40 @@ const aspect_colors = {
   "Economy" : "rgba(102, 194, 165, 0.4)",
   "Equality & Justice" : "rgba(252, 141, 98, 0.4)",
   "Health & Wellbeing" : "rgba(141, 160, 203, 0.4)",
-  "Health & Well-being" : "rgba(141, 160, 203, 0.4)",
   "Information, Discourse & Governance" : "rgba(231, 138, 195, 0.4)",
   "Politics" : "rgba(166, 216, 84, 0.4)",
   "Power" : "rgba(255, 217, 47, 0.4)",
   "Security & Privacy" : "rgba(229, 196, 148, 0.4)",
   "Social Norms & Relationships" : "rgba(179, 179, 179, 0.4)",
-  "User Experience & Entertainment" : "rgba(76, 175, 80, 0.4)"
+  "User Experience & Entertainment" : "rgba(76, 175, 80, 0.4)",
+  "Environment & Sustainability" : "rgba(123, 123, 231, 0.4)",
 }
 
-var card_colors = {
-    "Economy" : "rgba(102, 194, 165, 0.05)",
-    "Equality & Justice" : "rgba(252, 141, 98, 0.05)",
-    "Health & Wellbeing" : "rgba(141, 160, 203, 0.05)",
-    "Information, Discourse & Governance" : "rgba(231, 138, 195, 0.05)",
-    "Politics" : "rgba(166, 216, 84, 0.05)",
-    "Power" : "rgba(255, 217, 47, 0.05)",
-    "Security & Privacy" : "rgba(229, 196, 148, 0.05)",
-    "Social Norms & Relationships" : "rgba(179, 179, 179, 0.05)",
-    "User Experience & Entertainment" : "rgba(76, 175, 80, 0.05)"
+var name_dict = {
+    "economy": "Economy",
+    "equality & justice": "Equality & Justice",
+    "health & well-being": "Health & Wellbeing",
+    "health & wellbeing": "Health & Wellbeing",
+    "information, discourse & governance": "Information, Discourse & Governance",
+    "access to information & discourse": "Information, Discourse & Governance",
+    "politics": "Politics",
+    "power": "Power",
+    "security & privacy": "Security & Privacy",
+    "social norms & relationship": "Social Norms & Relationships",
+    "user experience": "User Experience & Entertainment",
+    "environment & sustainability": "Environment & Sustainability",
+    "power dynamics": "Power",
+    "Navigation": "Health & Wellbeing",
+    'Economy': "Economy",
+    'Equality & Justice': "Equality & Justice",
+    'Health & Wellbeing': "Health & Wellbeing",
+    'Information, Discourse & Governance': "Information, Discourse & Governance",
+    'Politics': "Politics",
+    'Power': "Power",
+    'Security & Privacy': "Security & Privacy",
+    'Social Norms & Relationships': "Social Norms & Relationships",
+    'User Experience & Entertainment': "User Experience & Entertainment",
+    'Environment & Sustainability': "Environment & Sustainability"
 }
 
 
@@ -153,10 +168,10 @@ const loadCards = (data) => {
 
             $("#allcards").append(`
                 <div id="card-` + d.index + `" class="col-3 mb-3" >
-                    <div class="card shadow uccards" style="background-color:` + card_colors[d.label] + `">
-                    <div id="cardhead" class="card-header" style="background-color:` + aspect_colors[d.label] + `">
+                    <div id="cardhead" class="card-header" style="background-color:` + aspect_colors[name_dict[d.label]] + `">
                     <div class="justify-content-between">
-                        <div>` + d.label + `</div>
+                        <div>` + name_dict[d.label] + `</div>
+
                     </div>
                     </div>
                         <div class="card-body">` +
@@ -252,6 +267,28 @@ const reject_option = (elem) => {
     });
 }
 
+function searchArticles() {
+    // Send the article data to the server using an AJAX request
+    $.ajax({
+        type: "POST",
+        url: "http://localhost:8000/search",
+        contentType: "application/json",
+        data: JSON.stringify({"query": $("#search").val()}),
+        success: function(response) {
+            console.log(response);
+
+            d3.csv("static/data/temp_search.csv").then(function(dt){
+                data = dt;
+                maindata = dt;
+            }).then(function(){
+                loadCards(maindata);
+            });
+        },
+        error: function() {
+            alert("An error occurred. Please try again.");
+        }
+    });
+}
 
 $(document).ready(function() {
     // let tech = getUrlParameter('tech');
@@ -267,9 +304,17 @@ $(document).ready(function() {
         loadCards(shuffleCards(maindata));
     });
 
-    $("#search").on('input', function(e){
-        onChange(500);
+    // $("#search").on('input', function(e){
+    //     // onChange(500);
+    //     // 
+    // });
+    $("#search").bind('enterKey', searchArticles);
+    $("#search").keyup(function(e){
+        if(e.keyCode == 13) {
+            $("#search").trigger("enterKey");
+        }
     });
+
   
     $("#aspectinput").on('input', function(e){
         onChange(0);

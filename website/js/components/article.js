@@ -61,7 +61,7 @@ $(document).ready(function() {
         // Send the article data to the server using an AJAX request
         $.ajax({
             type: "POST",
-            url: "http://localhost:8000/request",
+            url: "http://104.197.248.47:80/request",
             contentType: "application/json",
             data: JSON.stringify({"url": $("#url").val(), "domain": $("#domain").val()}),
             success: function(response) {

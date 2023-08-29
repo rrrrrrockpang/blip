@@ -3,6 +3,7 @@ venv
 old
 intermediate
 wired
+.DS_Store
 
 ./data
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.

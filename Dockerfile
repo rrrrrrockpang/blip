@@ -1,13 +1,14 @@
 FROM tiangolo/uvicorn-gunicorn-fastapi:python3.9
 
-WORKDIR .
+# Create and set the working directory
+WORKDIR /fastapi_app
 
-COPY requirements.txt .
+# Install dependencies
+COPY requirements.txt /fastapi_app/
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
+COPY ./app .
 
-COPY . .
+EXPOSE 10
 
-EXPOSE 3100
-
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "10"]

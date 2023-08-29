@@ -1,0 +1,4 @@
+.git*
+**/*.pyc
+.venv/
+.blip-react/node_modules

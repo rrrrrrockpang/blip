@@ -1,0 +1,13 @@
+version: '3'
+services:
+  fastapi:
+    build: .  # Dockerfile context for FastAPI is the root directory
+    ports:
+      - "8000:10"  # Map port 8000 on the host to port 10 in the container
+    depends_on:
+      - frontend  # Optionally make sure frontend is built first
+
+  frontend:
+    build: ./blip-react  # Dockerfile context for React is the blip-react directory
+    ports:
+      - "80:80"  # Map port 80 on the host to port 80 in the container

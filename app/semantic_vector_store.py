@@ -5,6 +5,8 @@ import json
 import torch
 import logging
 import pandas as pd
+from datasets import concatenate_datasets
+
 
 os.environ['KMP_DUPLICATE_LIB_OK']='True'
 class SemanticVectorStore():
@@ -64,27 +66,46 @@ class SemanticVectorStore():
         return embeddings_dataset
     
 
-    def search(self, query, k=5):
+    def search(self, query, domain, aspect, k=100):
         if self.embeddings_dataset is None:
             logging.error("embedding dataset is not initialized")
             return {"error": "embedding dataset is not initialized"}
+        
         query_embedding = self.get_embeddings([query]).cpu().detach().numpy()
-        scores, samples = self.embeddings_dataset.get_nearest_examples(
-            "embeddings", query_embedding, k=k
-        )
+        if domain == "" and aspect == "":
+            scores, samples = self.embeddings_dataset.get_nearest_examples(
+                "embeddings", query_embedding, k=k
+            )
+        else:
+            filtered_datasets = []
+            for i, example in enumerate(self.embeddings_dataset):
+                if example['sector'] == domain and example['label'] == aspect:
+                    filtered_datasets.append(example)
+                elif example['sector'] == domain:
+                    filtered_datasets.append(example)
+                elif example['label'] == aspect:
+                    filtered_datasets.append(example)
+            if not filtered_datasets:
+                return {"error": "No matching entries for the given domain and aspect"}
+            
+            print("Number of filtered datasets: ", len(filtered_datasets))
+            filtered_datasets = Dataset.from_dict(pd.DataFrame(filtered_datasets))
+            if "embeddings" not in filtered_datasets.list_indexes():
+                filtered_datasets.add_faiss_index(column="embeddings")
+
+            # query_embedding = self.get_embeddings([query]).cpu().detach().numpy()
+            scores, samples = filtered_datasets.get_nearest_examples("embeddings", 
+                                                                    query_embedding, 
+                                                                    k=k)
 
         samples_df = pd.DataFrame.from_dict(samples)
         samples_df["scores"] = scores
-        samples_df.sort_values("scores", ascending=False, inplace=True)
+        samples_df.sort_values("scores", ascending=True, inplace=True)
+        print(samples_df["title"].tolist())
+        print(samples_df)
 
-        # return all the dataframe
-        # samples_df = pd.DataFrame(self.embeddings_dataset)
-        # print(samples_df.head())
+        # print(samples_df["title"].tolist())
         return samples_df["title"].tolist()
-        # combined_df = pd.concat([samples_df, embeddings_df], axis=0, ignore_index=True)
-        # combined_df.drop_duplicates(subset="embeddings", keep="first", inplace=True)
-
-        # return combined_df
 
     
 # vs = SemanticVectorStore("static/data/all_vectors", "static/data/overall.csv")

@@ -48,8 +48,9 @@ class SemanticVectorStore():
     def initiaze_embeddings_dataset(self):
         if os.path.exists(self.path):
             embeddings_dataset = load_from_disk(self.path)
-            embeddings_dataset.add_faiss_index(column="embeddings")
-            return embeddings_dataset
+            if embeddings_dataset.num_rows == len(pd.read_csv(self.vanila_path)):
+                embeddings_dataset.add_faiss_index(column="embeddings")
+                return embeddings_dataset
 
         data = pd.read_csv(self.vanila_path)
         data['vector_text'] = data.apply(lambda x: "Title: {}\n\nAbstract: {}".format(x['title'], x['gpt_summary']), axis=1)
@@ -60,6 +61,9 @@ class SemanticVectorStore():
         )
         
         if not os.path.exists(self.path):
+            embeddings_dataset.save_to_disk(self.path)
+    
+        if embeddings_dataset.num_rows == len(pd.read_csv(self.vanila_path)):
             embeddings_dataset.save_to_disk(self.path)
         
         embeddings_dataset.add_faiss_index(column="embeddings")
@@ -88,12 +92,14 @@ class SemanticVectorStore():
             if not filtered_datasets:
                 return {"error": "No matching entries for the given domain and aspect"}
             
-            print("Number of filtered datasets: ", len(filtered_datasets))
+            # print("Number of filtered datasets: ", len(filtered_datasets))
             filtered_datasets = Dataset.from_dict(pd.DataFrame(filtered_datasets))
             if "embeddings" not in filtered_datasets.list_indexes():
                 filtered_datasets.add_faiss_index(column="embeddings")
 
             # query_embedding = self.get_embeddings([query]).cpu().detach().numpy()
+            if filtered_datasets.num_rows <= k:
+                k = filtered_datasets.num_rows
             scores, samples = filtered_datasets.get_nearest_examples("embeddings", 
                                                                     query_embedding, 
                                                                     k=k)
@@ -101,8 +107,6 @@ class SemanticVectorStore():
         samples_df = pd.DataFrame.from_dict(samples)
         samples_df["scores"] = scores
         samples_df.sort_values("scores", ascending=True, inplace=True)
-        print(samples_df["title"].tolist())
-        print(samples_df)
 
         # print(samples_df["title"].tolist())
         return samples_df["title"].tolist()

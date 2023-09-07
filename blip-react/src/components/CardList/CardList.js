@@ -39,7 +39,7 @@ export default function CardList({ cards, onAdd, onRemove }) {
   };
 
   return (
-    <div id="scrollableDiv" style={{ width: '100%', height: '80vh', overflowY: 'auto' }}>
+    <div id="scrollableDiv" style={{ width: '100%', height: '80vh', overflowY: 'auto', padding: '20px'}}>
         <Masonry
         breakpointCols={breakpointColumnsObj}
         className="my-masonry-grid"

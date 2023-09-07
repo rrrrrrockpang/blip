@@ -6,4 +6,25 @@
   .btn:hover {
     background-color: #7cffc2;
   }
-  
+
+.card-title {
+  font-family: 'DM Sans', sans-serif;
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.news-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.4rem !important;
+}
+.card-text {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  color: #777;
+}
+
+.card-class {
+  border: none;
+}

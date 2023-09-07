@@ -15,6 +15,8 @@ import ContributeModal from './components/ContributeModal/ContributeModal';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Joyride from 'react-joyride';
 
+import WebFont from 'webfontloader';
+
 
 
 function App() {
@@ -98,6 +100,11 @@ function App() {
       
 
     useEffect(() => {
+        WebFont.load({
+            google: {
+              families: ['DM Serif Display', 'DM Sans']
+            }
+          });
         if (!Cookies.get('shown')) {
         setShowModal(true);
         }

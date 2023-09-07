@@ -14,4 +14,12 @@
     margin-bottom: 30px;
   }
   
-  
+  #scrollableDiv::-webkit-scrollbar {
+    display: none;
+  }
+
+/* Hide scrollbar for IE, Edge and Firefox */
+#scrollableDiv {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+} 

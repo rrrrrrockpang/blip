@@ -1,15 +1,16 @@
 import newspaper
 import requests
+import glob
 import sqlite3
 import os
 import pickle
 import json
-import uuid
+import tqdm
 import time
 import argparse
 import unicodedata
 import re
-import logging
+import concurrent.futures
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from newspaper import Article
@@ -20,12 +21,16 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
+from concurrent.futures import ThreadPoolExecutor
+from urllib.parse import unquote
+
 chrome_options = Options()
 # chrome_options.add_argument("--headless")
 
 class Fetcher():
-    def __init__(self, keyword):
+    def __init__(self, keyword, domain_folder):
         self.keyword = keyword
+        self.domain_folder = domain_folder
         # self.driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
 
     def get_wired_links(self, soup):
@@ -44,6 +49,7 @@ class Fetcher():
             pickle.dump(stuff, f, protocol=pickle.HIGHEST_PROTOCOL)
 
     def retrieve_from_wired(self, k=50):
+        print("Retrieving from Wired... : {}".format(self.keyword))
         # get url
         query = self.keyword
         url = 'https://www.wired.com/search/?q=' + query.replace(' ', '+') + '&sort=score+desc'
@@ -90,7 +96,57 @@ class Fetcher():
         print("Done retrieving from Wired: {} links".format(len(links)))
         return list(links)
     
+    def process_fetched_techcrunch(self, links):
+
+        # helper functions for techcrunch
+        def extract_final_url(yahoo_url):
+            # Find the start position of 'RU='
+            start_pos = yahoo_url.find("RU=")
+            
+            if start_pos == -1:
+                return None
+            
+            # Add 3 to skip 'RU='
+            start_pos += 3
+            
+            # Find the next '/' after 'RU='
+            end_pos = yahoo_url.find("/", start_pos)
+            
+            if end_pos == -1:
+                return None
+            
+            # Extract and decode the final URL
+            final_url_encoded = yahoo_url[start_pos:end_pos]
+            final_url = unquote(final_url_encoded)
+            
+            return final_url
+
+        def fetch_url(link):
+            try:
+                with requests.Session() as s:
+                    # If the website uses JavaScript for redirection, we won't be able to capture it with 'requests'
+                    r = s.get(link, allow_redirects=True, timeout=10)
+                    # This gives you the final URL after following all redirects
+                    final_url = r.url
+                    # print(f"Initial URL: {link}, Final URL: {final_url}")
+                    return extract_final_url(final_url)
+            except Exception as e:
+                print(f"Error fetching {link}: {e}")
+                return None
+        
+        final_links = []
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            for link, result in zip(links, executor.map(fetch_url, links)):
+                if result is not None:
+                    # print(f"Success: {link} => {result}")
+                    final_links.append(result)
+                else:
+                    print(f"Error fetching {link}")
+
+        return final_links
+    
     def retrieve_from_techcrunch(self, url, k=100):
+        print("Retrieving from TechCrunch... : {}".format(self.keyword))
         # has to input url since techcrunch website includes a random string
         query = self.keyword
 
@@ -129,10 +185,15 @@ class Fetcher():
         
         driver.quit()
         print("Done retrieving from TechCrunch: {} links".format(len(links)))
-        return list(links)
+
+        # techcrunch needs additional redirecting
+        # links is a set at this step
+        links = self.process_fetched_techcrunch(list(links))
+        return links
     
 
     def retrieve_from_mit_tech_review(self, k=100):
+        print("Retrieving from MIT Tech Review... : {}".format(self.keyword))
         # get url
         query = self.keyword
         url = 'https://www.technologyreview.com/search/?s=' + query.replace(' ', '%20') 
@@ -180,7 +241,7 @@ class Fetcher():
     
 
     def retreive_from_the_verge(self, k=100):
-        print("Retrieving from The Verge...")
+        print("Retrieving from The Verge... : {}".format(self.keyword))
         query = self.keyword
         url = 'https://www.theverge.com/search?q=' + query.replace(' ', '%20')
 
@@ -228,20 +289,100 @@ class Fetcher():
         return list(links)
     
 
+    def download_and_parse(self, link, sector, source):
+        try:
+            article = Article(link)
+            article.download()
+            article.parse()
+
+            title = article.title
+            if len(title) <= 1:
+                time.sleep(2)
+                article = Article(link)
+                article.download()
+                article.parse()
+                title = article.title
+                if len(title) <= 1:
+                    return None
+
+            if "techcrunch" in title:
+                title = title.replace("techcrunch", "")
+
+            # source = os.path.basename(file).replace(sector.replace(" ", "_"), "").replace(".pkl", "").replace("_", " ")
+
+            element = {
+                'title': title,
+                'text': article.text,
+                'sector': sector,
+                'source': source,
+                'url': link,
+                'published_at': article.publish_date.strftime("%m/%d/%Y") if article.publish_date else 'Unknown'
+            }
+
+            return element
+        except Exception as e:
+            print(f"Error processing link {link}. Error: {e}")
+            return None
+        
+    def parse_articles(self):
+        elements = []
+        
+        for file in glob.glob("{}/*.pkl".format(self.domain_folder)):
+            try:
+                with open(file, "rb") as f:
+                    links = pickle.load(f, encoding='utf-8')
+                print("#### File: {}; Number of links: {}".format(file, len(links)))
+
+                with concurrent.futures.ThreadPoolExecutor() as executor:
+                    sector = self.keyword
+                    if "techcrunch" in file:
+                        source = "techcrunch"
+                    elif "mit_tech_review" in file:
+                        source = "MIT Tech Review"
+                    elif "the_verge" in file:
+                        source = "The Verge"
+                    elif "wired" in file:
+                        source = "Wired"
+                    else:
+                        source = "Unknown"
+                    
+                    results = list(tqdm.tqdm(executor.map(self.download_and_parse, links, [sector] * len(links), [source] * len(links)), total=len(links)))
+                elements.extend([result for result in results if result is not None])
+
+                print("#### File: {}; Number of elements: {}".format(file, len(elements)))
+                with open("./{}/articles.pkl".format(domain_folder), "wb") as f:
+                    pickle.dump(elements, f, protocol=pickle.HIGHEST_PROTOCOL)
+            
+            except Exception as e:
+                print(f"Error processing file {file}. Error: {e}")
+
+    
+    def format(self):
+        with open("{}/articles.pkl".format(self.domain_folder), "rb") as f:
+            articles = pickle.load(f)
+            dic = {a["url"]: a for a in articles}
+
+        with open("{}/articles_dic.pkl".format(self.domain_folder), "wb") as f:
+            pickle.dump(dic, f, protocol=pickle.HIGHEST_PROTOCOL)
+
+        
+
 
 if __name__ == "__main__":
     # Fetch articles
-    domain_name = "Embodied AI"
-    domain_folder = "embodied_ai"
+    domain_name = "natural language processing"
+    domain_folder = "natural_language_processing"
 
-    fetcher = Fetcher(domain_name)
-    fetcher.retreive_from_the_verge()
-    fetcher.retrieve_from_techcrunch("https://search.techcrunch.com/search;_ylt=AwrO7foOzfJkTN4QdzKnBWVH;_ylc=X1MDMTE5NzgwMjkxOQRfcgMyBGZyA3RlY2hjcnVuY2gEZ3ByaWQDSDBIZHlxOGNSUUNLLlhzRDhUVkdJQQRuX3JzbHQDMARuX3N1Z2cDMQRvcmlnaW4Dc2VhcmNoLnRlY2hjcnVuY2guY29tBHBvcwMwBHBxc3RyAwRwcXN0cmwDMARxc3RybAMxOARxdWVyeQNhaSUyMGRlY2lzaW9uLW1ha2luZwR0X3N0bXADMTY5MzYzMzgxMg--?p=ai+decision-making&fr2=sb-top&fr=techcrunch")
+    fetcher = Fetcher(domain_name, domain_folder)
+    # fetcher.retreive_from_the_verge()
     fetcher.retrieve_from_wired()
-    fetcher.retrieve_from_mit_tech_review()
-
-
-
+    # fetcher.retrieve_from_mit_tech_review()
+    fetcher.retrieve_from_techcrunch("https://search.techcrunch.com/search;_ylt=Awr99Tzr3fdkGCEFqh.nBWVH;_ylc=X1MDMTE5NzgwMjkxOQRfcgMyBGZyAwRncHJpZAN1VXhXUVlzWlR2RzlCSEhxMmxvT21BBG5fcnNsdAMwBG5fc3VnZwM5BG9yaWdpbgNzZWFyY2gudGVjaGNydW5jaC5jb20EcG9zAzAEcHFzdHIDBHBxc3RybAMwBHFzdHJsAzI3BHF1ZXJ5A25hdHVyYWwlMjBsYW5ndWFnZSUyMHByb2Nlc3NpbmcEdF9zdG1wAzE2OTM5NjU4MDc-?p=natural+language+processing&fr2=sb-top")
+    
+    # Parse articles
+    fetcher.parse_articles()
+    fetcher.format()
+    
 
 
 
@@ -310,9 +451,9 @@ if __name__ == "__main__":
 #         print(f"Error processing file {file}. Error: {e}")
 
 
-with open("{}/articles.pkl".format(domain_folder), "rb") as f:
-    articles = pickle.load(f)
-    dic = {a["url"]: a for a in articles}
+# with open("{}/articles.pkl".format(domain_folder), "rb") as f:
+#     articles = pickle.load(f)
+#     dic = {a["url"]: a for a in articles}
 
-with open("{}/articles_dic.pkl".format(domain_folder), "wb") as f:
-    pickle.dump(dic, f, protocol=pickle.HIGHEST_PROTOCOL)
+# with open("{}/articles_dic.pkl".format(domain_folder), "wb") as f:
+#     pickle.dump(dic, f, protocol=pickle.HIGHEST_PROTOCOL)

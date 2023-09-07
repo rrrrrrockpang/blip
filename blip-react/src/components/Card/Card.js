@@ -63,25 +63,25 @@ function Card({ mode, title, text, gpt_summary, url, sector, magazine, label, on
   const magazineLogo = getMagazineLogo(magazine);
 
   return (
-    <div className="card mb-3">
+    <div className="card mb-3 shadow card-class">
       <div className={`card-header`} style={{backgroundColor: cardHeaderColor}}>
         <h5 className="card-title">{boldFirstLetter(label)}</h5>
       </div>
       <div className="card-body">
-        <a 
+        {/* <a 
           href={url} 
           className="card-link" 
           target="_blank" 
           rel="noopener noreferrer"
-          style={{textDecoration: 'none'}}>
-            <h5 className="card-title">{title}</h5>
-        </a>
+          style={{textDecoration: 'none'}}> */}
+            <h5 className="news-title">{title}</h5>
+        {/* </a> */}
         <p className="card-text">{gpt_summary}</p>
         {/* <p className="card-text"><small className="text-muted">{sector}</small></p> */}
         
 
         <div className="d-flex justify-content-between">
-          <div className="p-2">
+          <div className="">
             {
               mode !== 'accordion' && 
               <button className="bookmark-btn btn btn-sm mr-2" onClick={onAdd}>
@@ -92,7 +92,7 @@ function Card({ mode, title, text, gpt_summary, url, sector, magazine, label, on
               <i className="fas fa-times-circle"></i>
             </button>
           </div>
-          <div className="p-2">
+          <div className="">
             <img src={magazineLogo} alt={`${magazine} logo`} height="15" />
           </div>
         </div>

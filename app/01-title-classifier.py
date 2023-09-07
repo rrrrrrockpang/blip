@@ -82,6 +82,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if os.path.exists(args.output_data_path):
+        with open(args.output_data_path, "rb") as file:
+            lst = pickle.load(file)
+            print("Length: {}".format(len(lst)))
         logging.error("Title Classifying... Output path already exists. Exiting...")
     else:
         main(args.articles, args.model_path, args.output_data_path)

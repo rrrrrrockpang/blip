@@ -34,23 +34,23 @@ yarn-error.log*
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-./blip-react/node_modules
-./blip-react/.pnp
-./blip-react.pnp.js
+/blip-react/node_modules
+/blip-react/.pnp
+/blip-react.pnp.js
 
 # testing
-./blip-react/coverage
+/blip-react/coverage
 
 # production
-./blip-react/build
+/blip-react/build
 
 # misc
-./blip-react/.DS_Store
-./blip-react/.env.local
-./blip-react/.env.development.local
-./blip-react/.env.test.local
-./blip-react/.env.production.local
+/blip-react/.DS_Store
+/blip-react/.env.local
+/blip-react/.env.development.local
+/blip-react/.env.test.local
+/blip-react/.env.production.local
 
-./blip-react/npm-debug.log*
-./blip-react/yarn-debug.log*
-./blip-react/yarn-error.log*
+/blip-react/npm-debug.log*
+/blip-react/yarn-debug.log*
+/blip-react/yarn-error.log*

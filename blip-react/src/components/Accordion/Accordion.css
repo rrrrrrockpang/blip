@@ -1,0 +1,28 @@
+.accordion-section {
+    position: -webkit-sticky; /* For Safari */
+    position: sticky;
+    top: 0;
+    width: 24vw;
+    height: 90vh;
+    max-height: 100vh; /* Ensures it does not exceed the viewport */
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    margin-top: 20px;
+    overflow-y: auto;
+    /* other styles as necessary */
+}
+
+.accordion-title {
+    text-align: center;
+    margin-bottom: 15px;
+    font-weight: bold;
+    font-size: 18px;
+    color: #333;
+}
+
+.accordion > .card > .card-header h5 {
+    text-align: left;
+}

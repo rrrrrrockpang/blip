@@ -1,0 +1,97 @@
+/* Modal Container */
+#articleModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 2;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Modal Content */
+#articleModalContent {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  text-align: center;
+}
+
+/* Close Button */
+#articleModal .close {
+  position: absolute;
+  background-color: gray;
+  top: 10px;  /* Adjust as needed */
+  right: 10px;  /* Adjust as needed */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+/* Label Styling */
+#articleModal label {
+  margin-top: 10px;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+/* Input and Select Box */
+#articleModal input[type="text"],
+#articleModal select {
+  width: 100%;
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Submit Button */
+#articleModal .submit-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+/* Results */
+#articleModal #results {
+  margin-top: 20px;
+}
+
+/* Show/Hide modal */
+#articleModal {
+  display: none;  /* hidden by default */
+}
+
+#articleModal.is-open {
+  display: flex;  /* shown when isOpen is true */
+}
+
+
+/* spinner */
+#articleModal .loader {
+  border: 16px solid #f3f3f3; /* Light grey */
+  border-top: 16px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+  margin: auto;
+  margin-top: 50px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

@@ -14,8 +14,17 @@ import ArticleModal from './components/ArticleModal/ArticleModal';
 import ContributeModal from './components/ContributeModal/ContributeModal';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Joyride from 'react-joyride';
-
 import WebFont from 'webfontloader';
+
+import  {
+    Text,
+    Button,
+} from '@mantine/core';
+import {
+    IconMicroscope,
+    IconHealthRecognition,
+    IconArrowsShuffle,
+} from '@tabler/icons-react';
 
 
 
@@ -296,14 +305,14 @@ function App() {
                 <div className='row'>
                     <div className='col-9'>
                         {/* Search and Filters */}
-                        <div className="row mb-3 align-items-center">
+                        <div className="row mt-4 mb-3 align-items-end">
                             <div className="col-md-3">
-                                <FilterDropdown label="Domain" options={
+                                <FilterDropdown label={<Text><IconMicroscope size={14}/> Domain</Text> } description="Which kind of technology?" options={
                                     ['Social Media', 'Voice Assistant', 'Augmented/Virtual Reality', "Computer Vision", "Robotics", "Mobile Technology", "AI Decision-Making", "Neuroscience", "Computational Biology", "Ubiquitous Computing"]
                                 } onChange={setDomainFilter} />
                             </div>
                             <div className="col-md-3">
-                                <FilterDropdown label="Aspect" options={
+                                <FilterDropdown label={<Text><IconHealthRecognition size={14}/> Aspect</Text> } description="Which aspect of life is affected?" options={
                                     ['user experience', 'health & wellbeing', 'security & privacy', 'access to information & discourse', 'social norms & relationship', 'equality & justice', 'economy', 'politics', 'power dynamics', 'environment & sustainability']
                                 } onChange={setAspectFilter} />
                             </div>
@@ -314,10 +323,19 @@ function App() {
                                 handleSearch={handleSearch} 
                                 />
                             </div>
-                            <div className="col-md-2 text-center shuffle-button">
-                                <button className="btn btn-outline-secondary" onClick={handleShuffle}>
+                            <div className="col-md-2">
+                                <Button
+                                    color="green"
+                                    variant="light"
+                                    leftIcon={<IconArrowsShuffle size={15}/>}
+                                    onClick={handleShuffle}
+
+                                >
+                                    Shuffle
+                                </Button>
+                                {/* <button className="btn btn-outline-secondary" >
                                     <i className="fas fa-random"></i> Shuffle
-                                </button>
+                                </button> */}
                             </div>
                         </div>
 

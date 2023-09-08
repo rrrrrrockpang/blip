@@ -6,34 +6,68 @@ import The_Verge from '../../assets/The Verge.png';
 import WIRED from '../../assets/Wired.png';  
 import "./Card.css"
 
+import {
+  IconCashBanknote, 
+} from '@tabler/icons-react';
+
 function Card({ mode, title, text, gpt_summary, url, sector, magazine, label, onAdd, onRemove }) {
   // Function to determine color based on domain/sector
   const getCardHeaderColor = (aspectLabel) => {
     switch(aspectLabel) {
       case 'economy': 
-        return "rgba(102, 194, 165, 0.4)";
+        return "#cfd8dc";
       case 'equality & justice':
-        return "rgba(252, 141, 98, 0.4)";
+        return "#f8bbd0";
       case 'health & wellbeing':
-        return "rgba(141, 160, 203, 0.4)";
+        return "#b3e5fc";
       case 'access to information & discourse':
-        return "rgba(231, 138, 195, 0.4)";  
+        return "#e6ee9c";  
       case 'politics':
-        return "rgba(166, 216, 84, 0.4)";
+        return "#ffcc80";
       case 'power dynamics':
-        return "rgba(255, 217, 47, 0.4)";
+        return "#ef9a9a";
       case 'security & privacy':
-        return "rgba(229, 196, 148, 0.4)";
+        return "#fff59d";
+        // "";
       case 'social norms & relationship':
-        return "rgba(179, 179, 179, 0.4)";
+        return "#e1bee7";
       case 'user experience':
-        return "rgba(76, 175, 80, 0.4)";
+        return "#d1c4e9";
       case 'environment & sustainability':
-        return "rgba(123, 123, 231, 0.4)";
+        return "#aed581";
       default:
         return 'bg-secondary';  // Default color for unknown domains
     }
   };
+
+  // Function to determine tabler icon logo based on aspects (e.g., economy, politics, etc.)
+  // const processAspectLogo = (aspectLabel) => {
+  //   switch(aspectLabel) {
+  //     case 'economy':
+  //       return (<IconCashBanknote size="16px" />);
+  //     case 'equality & justice':
+  //       return 'IconUsers';
+  //     case 'health & wellbeing':
+  //       return 'IconHeart';
+  //     case 'access to information & discourse':
+  //       return 'IconFileText';
+  //     case 'politics':
+  //       return 'IconFlag';
+  //     case 'power dynamics':
+  //       return 'IconPower';
+  //     case 'security & privacy':
+  //       return 'IconLock';
+  //     case 'social norms & relationship':
+  //       return 'IconUsers';
+  //     case 'user experience':
+  //       return 'IconUserCheck';
+  //     case 'environment & sustainability':
+  //       return 'IconGlobe';
+  //     default:
+  //       return 'IconFileText';  // Default icon for unknown domains
+  //   }
+  // };
+
 
   const getMagazineLogo = (magazine) => {
     switch(magazine) {
@@ -65,7 +99,7 @@ function Card({ mode, title, text, gpt_summary, url, sector, magazine, label, on
   return (
     <div className="card mb-3 shadow card-class">
       <div className={`card-header`} style={{backgroundColor: cardHeaderColor}}>
-        <h5 className="card-title">{boldFirstLetter(label)}</h5>
+        <h5 className="card-title aspect"><span className='aspect-name'>{boldFirstLetter(label)}</span></h5>
       </div>
       <div className="card-body">
         {/* <a 

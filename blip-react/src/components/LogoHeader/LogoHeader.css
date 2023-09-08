@@ -4,7 +4,7 @@
     justify-content: space-between;
     align-items: center;
     height: 10vh; /* Set the header height to 10% of the viewport height */
-    background-color: #f0f0f0; /* Set a background color for the header */
+    /* background-color: #f0f0f0; */
 }
 
 /* Style the logo image */
@@ -62,4 +62,6 @@ cursor: not-allowed;
     max-width: 100%; 
     margin: 0 auto;
     line-height: 1.5;
+    font-family: 'DM Sans', sans-serif;
 }
+

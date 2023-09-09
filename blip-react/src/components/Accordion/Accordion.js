@@ -17,10 +17,13 @@ import {
     Text,
     Badge,
     Group,
+    Anchor,
+    ActionIcon,
 } from '@mantine/core';
 
 import {
-    IconBookmarks,
+    IconLink,
+    IconBackspaceFilled,
 } from '@tabler/icons-react';
 
 
@@ -229,7 +232,7 @@ function Bookmarks({ cardsInList, onRemove }) {
                                 {card.label}
                             </Badge>
                     </Accordion.Control>
-                    <Accordion.Panel>
+                    <Accordion.Panel style={{ textAlign: 'left' }}>
                         <Text 
                             className={classes.cardText}
                             lineClamp={6}
@@ -237,11 +240,23 @@ function Bookmarks({ cardsInList, onRemove }) {
                             {card.text}
                             
                         </Text>
-                    <div className="d-flex justify-content-between mt-2">
+                        <Anchor href={card.url} target="_blank" mr={8} color="gray">
+                            {/* <IconExternalLink size={15} /> */}
+                            <Text 
+                            size="xs"
+                            style={{ display: 'inline-block' }}
+                            color="#aaa"
+                            mb={5}
+                            
+                            >
+                            Read More
+                            </Text>
+                        </Anchor>
+                    <div className="d-flex justify-content-between">
                     <div className="">
-                        <button className="bookmark-cancel-btn btn btn-sm" onClick={() => onRemove(card)} style={{color: "#ff9800"}}>
-                            <i className="fas fa-times-circle"></i>
-                        </button>
+                        <ActionIcon color="yellow" variant="transparent" onClick={() => onRemove(card)} style={{ display: 'inline-block' }}>
+                            <IconBackspaceFilled size={17} />
+                        </ActionIcon>
                     </div>
                     <div className="">
                         <img src={getMagazineLogo(card.magazine)} alt={`${card.magazine} logo`} height="15" />

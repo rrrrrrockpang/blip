@@ -10,7 +10,7 @@ import {
 
 const LogoHeader = ({openArticleModal, openContributeModal}) => {
     return (
-        <header id="homepage-logo-header" class="mt-4">
+        <header id="homepage-logo-header" class="mt-5 mb-4">
             <div></div>
             
             <div className="logo-container">
@@ -25,7 +25,7 @@ const LogoHeader = ({openArticleModal, openContributeModal}) => {
                     variant="filled"
                     color="green"
                     size="xs"
-                    radius="xl"
+                    radius="sm"
                     mr={20}
                     leftIcon={<IconPlus size={15} />}
                     onClick={openArticleModal}
@@ -37,7 +37,7 @@ const LogoHeader = ({openArticleModal, openContributeModal}) => {
                     variant="filled"
                     color="green"
                     size="xs"
-                    radius="xl"
+                    radius="sm"
                     mt={10}
                     mr={20}
                     leftIcon={<IconMicroscope size={15} />}

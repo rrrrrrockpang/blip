@@ -6,8 +6,11 @@ import The_Verge from '../../assets/The Verge.png';
 import WIRED from '../../assets/Wired.png';  
 import "./Card.css"
 
-import {
-  IconCashBanknote, 
+import { Anchor, Text, ActionIcon } from '@mantine/core';
+import { 
+  IconExternalLink,
+  IconBookmarkFilled,
+  IconTrash
 } from '@tabler/icons-react';
 
 function Card({ mode, title, text, gpt_summary, url, sector, magazine, label, onAdd, onRemove }) {
@@ -110,7 +113,28 @@ function Card({ mode, title, text, gpt_summary, url, sector, magazine, label, on
           style={{textDecoration: 'none'}}> */}
             <h5 className="news-title">{title}</h5>
         {/* </a> */}
-        <p className="card-text">{gpt_summary}</p>
+        {/* <p> */}
+          <Text
+            lineClamp={20}
+            className="card-text"
+            
+          >
+            {gpt_summary}
+          </Text>
+          <Anchor href={url} target="_blank" mr={8} color="gray" ta="right">
+                {/* <IconExternalLink size={15} /> */}
+                <Text 
+                  size="xs"
+                  style={{ display: 'inline-block' }}
+                  color="#aaa"
+                  mb={10}
+                  
+                >
+                  Read More
+                </Text>
+            </Anchor>
+          
+          {/* </p> */}
         {/* <p className="card-text"><small className="text-muted">{sector}</small></p> */}
         
 
@@ -118,13 +142,14 @@ function Card({ mode, title, text, gpt_summary, url, sector, magazine, label, on
           <div className="">
             {
               mode !== 'accordion' && 
-              <button className="bookmark-btn btn btn-sm mr-2" onClick={onAdd}>
-                <i className="fas fa-bookmark"></i>
-              </button>
+              <ActionIcon variant="transparent" color="gray" onClick={onAdd} style={{ display: 'inline-block' }}>
+                <IconBookmarkFilled size={17} />
+              </ActionIcon>
             }
-            <button className="bookmark-cancel-btn btn btn-sm" onClick={onRemove} style={{color: "#ff9800"}}>
-              <i className="fas fa-times-circle"></i>
-            </button>
+            <ActionIcon color="yellow" variant="transparent" onClick={onRemove} style={{ display: 'inline-block' }}>
+                <IconTrash size={16} />
+            </ActionIcon>
+            
           </div>
           <div className="">
             <img src={magazineLogo} alt={`${magazine} logo`} height="15" />

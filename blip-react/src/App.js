@@ -7,7 +7,7 @@ import DATASET from './dataset/dataset.csv';
 import CardList from './components/CardList/CardList';
 import FilterDropdown from './components/FilterDropdown/FilterDropdown';
 import LogoHeader from './components/LogoHeader/LogoHeader';
-import Accordion from './components/Accordion/Accordion';
+import Bookmarks from './components/Accordion/Accordion';
 import SafetyModal from './components/SafetyModal/SafetyModal';  // Adjust the path if you place it in another directory
 import SearchBar from './components/SearchBar/SearchBar';
 import ArticleModal from './components/ArticleModal/ArticleModal';
@@ -360,7 +360,7 @@ function App() {
                     </div>
 
                     <div className='col-3'>
-                        <Accordion cardsInList={cardsInList} onRemove={removeFromAccordionList} />
+                        <Bookmarks cardsInList={cardsInList} onRemove={removeFromAccordionList} />
                     </div>
                 </div>
             </div>

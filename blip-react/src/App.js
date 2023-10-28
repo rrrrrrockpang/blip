@@ -307,12 +307,12 @@ function App() {
                         {/* Search and Filters */}
                         <div className="row mt-4 mb-3 align-items-end">
                             <div className="col-md-3">
-                                <FilterDropdown label={<Text><IconMicroscope size={14}/> Domain</Text> } description="Which kind of technology?" options={
+                                <FilterDropdown id="filter-Domain" label={<Text><IconMicroscope size={14}/> Domain</Text> } description="Which kind of technology?" options={
                                     ['Social Media', 'Voice Assistant', 'Augmented/Virtual Reality', "Computer Vision", "Robotics", "Mobile Technology", "AI Decision-Making", "Neuroscience", "Computational Biology", "Ubiquitous Computing"]
                                 } onChange={setDomainFilter} />
                             </div>
                             <div className="col-md-3">
-                                <FilterDropdown label={<Text><IconHealthRecognition size={14}/> Aspect</Text> } description="Which aspect of life is affected?" options={
+                                <FilterDropdown id="filter-Aspect" label={<Text><IconHealthRecognition size={14}/> Aspect</Text> } description="Which aspect of life is affected?" options={
                                     ['user experience', 'health & wellbeing', 'security & privacy', 'access to information & discourse', 'social norms & relationship', 'equality & justice', 'economy', 'politics', 'power dynamics', 'environment & sustainability']
                                 } onChange={setAspectFilter} />
                             </div>
@@ -325,11 +325,11 @@ function App() {
                             </div>
                             <div className="col-md-2">
                                 <Button
+                                    className="shuffle-button"
                                     color="green"
                                     variant="light"
                                     leftIcon={<IconArrowsShuffle size={15}/>}
                                     onClick={handleShuffle}
-
                                 >
                                     Shuffle
                                 </Button>

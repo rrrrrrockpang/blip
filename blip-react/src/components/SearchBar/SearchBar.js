@@ -14,7 +14,7 @@ const SearchBar = ({ searchQuery, setSearchQuery, handleSearch }) => {
                 className="form-control"
                 id="search-bar"
             /> */}
-            <div style={{ textAlign: 'left' }}>
+            <div id="search-bar" style={{ textAlign: 'left' }}>
              <Input.Wrapper
                 id="input-demo"
                 label="&nbsp;"

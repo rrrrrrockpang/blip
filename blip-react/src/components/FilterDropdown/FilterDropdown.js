@@ -7,15 +7,14 @@ const boldFirstLetter = (text) => {
     return text.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 };
 
-function FilterDropdown({ label, description, options, onChange }) {
+function FilterDropdown({ id, label, description, options, onChange }) {
   return (
-    <div style={{ textAlign: 'left' }}>
+    <div id={id} style={{ textAlign: 'left' }}>
         <Input.Wrapper
                 id="input-demo"
                 label={label}
                 px={10}
                 description={description}
-                // description="Please enter your credit card information, we need some money"
                 >
             <Input
             component="select"

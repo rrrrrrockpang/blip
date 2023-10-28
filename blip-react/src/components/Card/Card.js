@@ -142,11 +142,11 @@ function Card({ mode, title, text, gpt_summary, url, sector, magazine, label, on
           <div className="">
             {
               mode !== 'accordion' && 
-              <ActionIcon variant="transparent" color="gray" onClick={onAdd} style={{ display: 'inline-block' }}>
+              <ActionIcon className="bookmark-btn" variant="transparent" color="gray" onClick={onAdd} style={{ display: 'inline-block' }}>
                 <IconBookmarkFilled size={17} />
               </ActionIcon>
             }
-            <ActionIcon color="yellow" variant="transparent" onClick={onRemove} style={{ display: 'inline-block' }}>
+            <ActionIcon className="bookmark-cancel-btn" color="yellow" variant="transparent" onClick={onRemove} style={{ display: 'inline-block' }}>
                 <IconTrash size={16} />
             </ActionIcon>
             

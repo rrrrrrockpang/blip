@@ -1,0 +1,42 @@
+.card {
+    text-align: left;
+}
+
+  
+  .btn:hover {
+    background-color: #7cffc2;
+  }
+
+.card-title {
+  
+}
+
+.news-title {
+  font-family: 'DM Serif Display';
+  font-size: 1.4rem !important;
+}
+
+.card-text {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  color: #777;
+}
+
+.card-class {
+  border: none;
+  background-color: #FAFAFA;
+}
+
+.aspect {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'DM Sans', sans-serif;
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #111;
+}
+
+.aspect-name {
+  color: #444;
+}

@@ -41,6 +41,8 @@ class ArticleResponse(BaseModel):
 
 class SearchRequest(BaseModel):
     query: str
+    domain: str
+    aspect: str
 
 
 def load_token_keys(path):
@@ -173,7 +175,9 @@ def fetch_article(url):
 
 from semantic_vector_store import SemanticVectorStore
 SEMANTIC_VECTOR_STORE_PATH = "static/data/all_vectors"
-OVERALL_CSV_PATH = "static/data/merged.csv"
+OVERALL_CSV_PATH = "static/data/overall.csv"
+# OVERALL_CSV_PATH = "../blip-react/src/dataset/dataset.csv"
+
 svs = SemanticVectorStore(SEMANTIC_VECTOR_STORE_PATH, OVERALL_CSV_PATH)
 
 @app.post("/search")
@@ -184,7 +188,11 @@ def search(search_request: SearchRequest):
         # with open("static/data/temp_search.csv", "w") as f:
         #     temp_search_df.to_csv(f, index=False)
         # return {"message": "success"}
-        temp_search_titles = svs.search(search_request.query)
+        temp_search_titles = svs.search(
+            search_request.query, 
+            search_request.domain,
+            search_request.aspect
+            )
         return {
             "message": "success",
             "titles": temp_search_titles
@@ -212,4 +220,4 @@ async def display(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=80)

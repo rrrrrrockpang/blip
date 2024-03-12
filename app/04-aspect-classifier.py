@@ -7,30 +7,65 @@ import logging
 import os
 from helper import llmRequester
 
+# def classify_aspect(articles, prompt):
+#     rows = []
+#     lr = llmRequester()
+#     for article in tqdm.tqdm(articles):
+#         text = article['text']
+#         if len(text) > 19000:
+#             continue 
+#         # answer = complete("{} \n\n{}".format(text, prompt.replace("<title>", article['title']).replace("<summary>", article['gpt3_summary'])))
+#         print(prompt)
+#         answer = lr.run_llama(prompt = prompt, text=article["gpt3_summary"])
+#         rows.append({
+#             'title': article['title'],
+#             'text': article['text'],
+#             'sector': article['sector'],
+#             'source': article['source'],
+#             'url': article['url'],
+#             'published_at': article['published_at'],
+#             'prediction': article['prediction'],
+#             'score': article['score'],
+#             'gpt3_filter_answer':  article['gpt3_filter_answer'],
+#             'gpt3_summary': article['gpt3_summary'],
+#             'gpt3_aspect': answer
+#         })
+#     return rows
+
+from concurrent.futures import ThreadPoolExecutor
+import tqdm
+
+def process_aspect(article, prompt, lr, results):
+    text = article['text']
+    if len(text) > 19000:
+        return
+
+    answer = lr.run_llama(prompt=prompt, text=article["gpt3_summary"])
+
+    results.append({
+        'title': article['title'],
+        'text': article['text'],
+        'sector': article['sector'],
+        'source': article['source'],
+        'url': article['url'],
+        'published_at': article['published_at'],
+        'prediction': article['prediction'],
+        'score': article['score'],
+        'gpt3_filter_answer':  article['gpt3_filter_answer'],
+        'gpt3_summary': article['gpt3_summary'],
+        'gpt3_aspect': answer
+    })
+
 def classify_aspect(articles, prompt):
     rows = []
     lr = llmRequester()
-    for article in tqdm.tqdm(articles):
-        text = article['text']
-        if len(text) > 19000:
-            continue 
-        # answer = complete("{} \n\n{}".format(text, prompt.replace("<title>", article['title']).replace("<summary>", article['gpt3_summary'])))
-        print(prompt)
-        answer = lr.run_llama(prompt = prompt, text=article["gpt3_summary"])
-        rows.append({
-            'title': article['title'],
-            'text': article['text'],
-            'sector': article['sector'],
-            'source': article['source'],
-            'url': article['url'],
-            'published_at': article['published_at'],
-            'prediction': article['prediction'],
-            'score': article['score'],
-            'gpt3_filter_answer':  article['gpt3_filter_answer'],
-            'gpt3_summary': article['gpt3_summary'],
-            'gpt3_aspect': answer
-        })
+    
+    with ThreadPoolExecutor() as executor:
+        # Wrap with list() to force execution
+        list(tqdm.tqdm(executor.map(process_aspect, articles, [prompt]*len(articles), [lr]*len(articles), [rows]*len(articles)), total=len(articles)))
+
     return rows
+
 
 def main(input_data_path, token_keys_path, output_data_path):
     # load token keys

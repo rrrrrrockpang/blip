@@ -4,6 +4,7 @@ old
 intermediate
 wired
 .DS_Store
+./app/data
 
 ./data
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.

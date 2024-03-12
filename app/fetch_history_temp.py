@@ -213,17 +213,33 @@ class Fetcher():
         return list(links)
     
 
-with open("voice_assistant_techcrunch.pkl", "rb") as f:
-    links = pickle.load(f)
-    print(links)
-    print(len(links))
+# with open("voice_assistant_techcrunch.pkl", "rb") as f:
+#     links = pickle.load(f)
+#     print(links)
+#     print(len(links))
 
 
-# fetcher = Fetcher("voice assistant")
-# try:
-#     fetcher.retrieve_from_techcrunch("https://search.techcrunch.com/search;_ylc=X3IDMgRncHJpZANaWUFMRl83alJ2Mmg5eDdXQmFmaFdBBG5fc3VnZwMxMARwb3MDMARwcXN0cgMEcHFzdHJsAzAEcXN0cmwDMTIEcXVlcnkDc29jaWFsJTIwbWVkaWEEdF9zdG1wAzE2OTMzNjQ3NTM-?p=social+media&fr=techcrunch")
-# except:
-#     pass
+fetcher = Fetcher("mobile technology")
+try:
+    fetcher.retrieve_from_techcrunch("https://search.techcrunch.com/search;_ylt=AwrgxQYiy.5kqvICdjenBWVH;_ylc=X1MDMTE5NzgwMjkxOQRfcgMyBGZyA3RlY2hjcnVuY2gEZ3ByaWQDa3ZMZ0dYQk9RSnlCMW5zRkU0MVdmQQRuX3JzbHQDMARuX3N1Z2cDOARvcmlnaW4Dc2VhcmNoLnRlY2hjcnVuY2guY29tBHBvcwMwBHBxc3RyAwRwcXN0cmwDMARxc3RybAMxNwRxdWVyeQNtb2JpbGUlMjB0ZWNobm9sb2d5BHRfc3RtcAMxNjkzMzcxMjA1?p=mobile+technology&fr2=sb-top&fr=techcrunch")
+except:
+    pass
+
+try: 
+    fetcher.retrieve_from_wired()
+except:
+    pass
+
+try:
+    fetcher.retrieve_from_mit_tech_review()
+except:
+    pass
+
+try:
+    fetcher.retreive_from_the_verge()
+except:
+    pass
+
 
 # fetcher = Fetcher("accessibility")
 # try:

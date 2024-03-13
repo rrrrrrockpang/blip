@@ -10,8 +10,10 @@ import LogoHeader from './components/LogoHeader/LogoHeader';
 import Bookmarks from './components/Accordion/Accordion';
 import SafetyModal from './components/SafetyModal/SafetyModal';  // Adjust the path if you place it in another directory
 import SearchBar from './components/SearchBar/SearchBar';
+import SideBar from './components/SideBar/SideBar';
 import ArticleModal from './components/ArticleModal/ArticleModal';
 import ContributeModal from './components/ContributeModal/ContributeModal';
+import Toggle from './components/Toggle/Toggle';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Joyride from 'react-joyride';
 import WebFont from 'webfontloader';
@@ -44,6 +46,7 @@ function App() {
     const [currentCards, setCurrentCards] = useState([]);  
     const [next, setNext] = useState(100);  
 
+    // joystick steps
     const [joyrideSteps, setJoyrideSteps] = useState([
         {
             target: '#filter-Domain',
@@ -81,6 +84,19 @@ function App() {
             title: "Bookmarked Cards"
         }
     ]);
+
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedCard, setSelectedCard] = useState(null);
+    const [activeView, setActiveView] = useState('bookmarks'); 
+    const openSidebar = () => setIsOpen(true);
+    const closeSidebar = () => setIsOpen(false);
+    
+    const openSidebarWithContent = (card) => {
+        setSelectedCard(card);
+        setIsOpen(true);
+        setActiveView('sidebar'); // Set active view to sidebar when opening it
+      };
+      
 
     const fetchMoreData = () => {
         console.log("fetchMoreData called");
@@ -123,7 +139,7 @@ function App() {
         setSearchQuery("");
     }, [domainFilter, aspectFilter]);
 
-    // Filter and Initialize Cards
+    
     useEffect(() => {
         const uniqueFilteredCards = cards.reduce((acc, card) => {
             if (!acc.some(accCard => accCard.title === card.title)) {
@@ -159,11 +175,11 @@ function App() {
     /** Logic to add and remove cards */ 
     const handleCloseModal = () => {
             setShowModal(false);
-            // Cookies.set('shown', 'yes', { expires: 1 }); // 1 day
         };
 
     const addToAccordionList = (card, targetElement) => {
         console.log('addToAccordionList called', card, targetElement);
+        setActiveView('bookmarks');
 
         const cardElement = targetElement.closest('.card'); // Assuming each card has a class of 'card'
         cardElement.classList.add('moving-to-accordion');
@@ -183,6 +199,12 @@ function App() {
             (aspectFilter ? card.label === aspectFilter : true)) {
             setFilteredCards([card, ...filteredCards]); // add back to main view
         }
+    }
+
+    const contribute = (card) => {
+        setSelectedCard(card);
+        setActiveView('sidebar');
+        setIsOpen(true); 
     }
 
     const removeFromMainList = (card) => {
@@ -333,34 +355,35 @@ function App() {
                                 >
                                     Shuffle
                                 </Button>
-                                {/* <button className="btn btn-outline-secondary" >
-                                    <i className="fas fa-random"></i> Shuffle
-                                </button> */}
                             </div>
                         </div>
 
-                        {/* Cards */}
-                        {/* <CardList cards={filteredCards} onAdd={addToAccordionList} onRemove={removeFromMainList} /> */}
                         <InfiniteScroll
                             dataLength={currentCards.length}
                             next={fetchMoreData}
                             hasMore={hasMore}
-                            // loader={<h4>Loading...</h4>}
                             scrollableTarget="scrollableDiv"
-                            // endMessage={
-                            //     <p style={{ textAlign: 'center' }}>
-                            //         <b>Yay! You have seen it all</b>
-                            //     </p>
-                            // }
                         >
-                        <CardList cards={currentCards} onAdd={addToAccordionList} onRemove={removeFromMainList} />
+                        <CardList 
+                            cards={currentCards} 
+                            onAdd={addToAccordionList} 
+                            onRemove={removeFromMainList} 
+                            onContribute={contribute}
+                            />
                 
                         </InfiniteScroll>
                         {filteredCards.length === 0 && <p>No cards found.</p>}
                     </div>
 
                     <div className='col-3'>
-                        <Bookmarks cardsInList={cardsInList} onRemove={removeFromAccordionList} />
+                        {/* <div className="view-toggle">
+                            <button onClick={() => setActiveView('bookmarks')} disabled={activeView === 'bookmarks'}>Bookmarks</button>
+                            <button onClick={() => setActiveView('sidebar')} disabled={activeView === 'sidebar'}>Sidebar</button>
+                        </div> */}
+                        <Toggle activeView={activeView} setActiveView={setActiveView} />
+
+                        {activeView === 'bookmarks' && <Bookmarks cardsInList={cardsInList} onRemove={removeFromAccordionList} />}
+                        {activeView === 'sidebar' && <SideBar isOpen={isOpen} onClose={closeSidebar} content={selectedCard} />}
                     </div>
                 </div>
             </div>

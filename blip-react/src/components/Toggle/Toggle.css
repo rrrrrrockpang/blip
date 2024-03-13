@@ -1,0 +1,9 @@
+.btn-secondary:not(:hover) {
+  background-color: #6c757d; /* Bootstrap's default secondary color */
+  border-color: #6c757d;
+}
+
+.btn-success:not(:hover) {
+  background-color: #28a745; /* Bootstrap's default success color */
+  border-color: #28a745;
+}

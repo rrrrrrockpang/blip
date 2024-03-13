@@ -62,7 +62,6 @@ const useStyles = createStyles((theme) => ({
     },
     bookmark: {
       background: theme.colors.gray[0],
-    //   'repeating-linear-gradient(120deg, #fff, #fff 3px, rgba(255, 255, 255, 0.8) 3px, rgba(255, 255, 255, 0.8) 5px), linear-gradient(to bottom, #eee, #eee)',
       marginTop: rem(50),
       position: '-webkit-sticky', /* For Safari */
       position: 'sticky',
@@ -92,23 +91,6 @@ const useStyles = createStyles((theme) => ({
         color: '#777',
         textAlign: 'left',
     }
-  
-    // item: {
-    //   display: 'flex',
-    //   flexDirection: 'column',
-    //   alignItems: 'center',
-    //   justifyContent: 'center',
-    //   textAlign: 'center',
-    //   borderRadius: theme.radius.md,
-    //   height: rem(90),
-    //   backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
-    //   transition: 'box-shadow 150ms ease, transform 100ms ease',
-  
-    //   '&:hover': {
-    //     boxShadow: theme.shadows.md,
-    //     transform: 'scale(1.05)',
-    //   },
-    // },
   }));
 
 
@@ -189,7 +171,7 @@ function Bookmarks({ cardsInList, onRemove }) {
       };
 
     return (
-        <MantineCard withBorder radius="md" className={classes.bookmark}>
+        <MantineCard withBorder radius="md" className={classes.bookmark} style={{ margin: 2}}>
         <Text className={classes.title}>Bookmarked Articles</Text>
           
         <Accordion
@@ -266,42 +248,7 @@ function Bookmarks({ cardsInList, onRemove }) {
                     </Accordion.Item>
                 ))}
             </Accordion>
-        {/* <SimpleGrid cols={3} mt="md">
-          {items}
-        </SimpleGrid> */}
       </MantineCard>
-
-            
-
-        // <div className="accordion-section">
-        //     <h3 className="accordion-title">Bookmarked Articles</h3>
-        //     <div className="accordion" id="cardsAccordion">
-        //         {cardsInList.map((card, index) => (
-        //             <div className="card" key={index}>
-        //                 <div className="card-header" id={`heading${index}`}>
-        //                     <h5 className="mb-0">
-        //                         <button 
-        //                             className="btn btn-link" 
-        //                             type="button" 
-        //                             data-toggle="collapse" 
-        //                             data-target={`#collapse${index}`} 
-        //                             aria-expanded="true" 
-        //                             aria-controls={`collapse${index}`}
-        //                             style={{textDecoration: 'none', textAlign: 'left'}}
-        //                         >
-        //                                 {card.title}
-        //                         </button>
-        //                     </h5>
-        //                 </div>
-        //                 <div id={`collapse${index}`} className="collapse" aria-labelledby={`heading${index}`} data-parent="#cardsAccordion">
-        //                     <div className="card-body">
-        //                         <Card {...card}  mode="accordion" onRemove={() => onRemove(card)} />
-        //                     </div>
-        //                 </div>
-        //             </div>
-        //         ))}
-        //     </div>
-        // </div>
     );
 }
 

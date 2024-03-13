@@ -10,7 +10,7 @@ import {
 
 const LogoHeader = ({openArticleModal, openContributeModal}) => {
     return (
-        <header id="homepage-logo-header" class="mt-5 mb-4">
+        <header id="homepage-logo-header" className="mt-5 mb-4">
             <div></div>
             
             <div className="logo-container">

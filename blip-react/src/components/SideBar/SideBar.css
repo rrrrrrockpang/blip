@@ -1,0 +1,49 @@
+  .sidebar {
+    max-height: 80vh !important;
+    overflow-y: auto !important;
+    border-color: beige;
+    background-color: #F8F9FA;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    /* position: -webkit-sticky;  */
+    /* position: sticky; */
+    height: 100%;
+  }  
+
+  .textarea {
+    width: 100%;
+    height: 150px;
+    padding: 10px;
+    border-color: #EBFBEE;
+    border-radius: 5px;
+    outline: none;
+    resize: none;
+  }
+  
+  .submit-button {
+    margin-top: 10px;
+    cursor: pointer;
+    background-color: #EBFBEE;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    width: 100%;
+  }
+  
+  .comments-section {
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .comment-box {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #ffffff;
+    border: 1px solid #d0d0d0;
+    border-radius: 5px; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  

@@ -3,17 +3,18 @@ import FUTURISM_LOGO from '../../assets/Futurism.png';
 import MIT_TECH_REVIEW_LOGO from '../../assets/MIT Tech Review.png';
 import TechCrunch from '../../assets/TechCrunch.png';
 import The_Verge from '../../assets/The Verge.png';
-import WIRED from '../../assets/Wired.png';  
+import WIRED from '../../assets/Wired.png';
 import "./Card.css"
+
 
 import { Anchor, Text, ActionIcon } from '@mantine/core';
 import { 
   IconExternalLink,
   IconBookmarkFilled,
-  IconTrash
+  IconTrash, IconEdit
 } from '@tabler/icons-react';
 
-function Card({ mode, title, text, gpt_summary, url, sector, magazine, label, onAdd, onRemove }) {
+function Card({ mode, title, text, gpt_summary, url, sector, magazine, label, onAdd, onRemove, onContribute }) {
   // Function to determine color based on domain/sector
   const getCardHeaderColor = (aspectLabel) => {
     switch(aspectLabel) {
@@ -148,6 +149,10 @@ function Card({ mode, title, text, gpt_summary, url, sector, magazine, label, on
             }
             <ActionIcon color="yellow" variant="transparent" onClick={onRemove} style={{ display: 'inline-block' }}>
                 <IconTrash size={16} />
+            </ActionIcon>
+            {/* new button about contributing */}
+            <ActionIcon color="blue" variant="transparent" onClick={onContribute} style={{ display: 'inline-block' }}>
+                <IconEdit size={16}/> {/* This is the edit icon */}
             </ActionIcon>
             
           </div>

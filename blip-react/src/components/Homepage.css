@@ -1,0 +1,130 @@
+.homepage {
+    font-family: Arial, sans-serif; 
+    margin: 0;
+    padding: 0;
+    background-size: cover;
+    color: #333;
+    overflow-y: auto;
+}
+
+.bibtex {
+    font-family: 'Roboto Slab', serif;
+    font-variant: small-caps;
+    font-weight: bold;
+}
+
+.subtitle {
+    font-size: 2.0rem;
+}
+
+.homepage > header, section, footer {
+    width: 60vw;
+    margin: 20px auto;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    text-align: center;
+}
+
+h1 {
+    font-weight: 500;
+    color: #333;
+    font-size: 2.5rem;
+}
+
+h2 {
+    font-weight: 500;
+    color: #333;
+    font-size: 2rem;
+}
+
+p {
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.titleIcon {
+    vertical-align: middle;
+    width: 50px;
+    height: auto;
+    margin-right: 15px;
+}
+
+#abstract, #resources {
+    margin-bottom: 20px;
+}
+
+.abstract-text {
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+ul li {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+ul li i {
+    margin-right: 10px;
+}
+
+a {
+    color: #1a0dab;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #d63384;
+}
+
+i {
+    transition: transform 0.3s ease;
+}
+
+i:hover {
+    transform: scale(1.1);
+}
+
+footer {
+    text-align: center;
+    font-size: 0.9em;
+    color: #666;
+}
+
+/* Media Queries for Mobile Devices */
+@media screen and (max-width: 768px) {
+    header, section, footer {
+        width: 90vw; /* Increase width for smaller screens */
+        margin: 10px auto;
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 2rem; /* Reduce font size for smaller screens */
+    }
+
+    h2 {
+        font-size: 1.5rem; /* Reduce font size for smaller screens */
+    }
+
+    .subtitle, p {
+        font-size: 1rem; /* Adjust font size for readability on small screens */
+    }
+
+    .titleIcon {
+        width: 40px; /* Adjust icon size for smaller screens */
+    }
+
+    .abstract-text, ul li {
+        text-align: left; /* Align text to left for better readability */
+    }
+}

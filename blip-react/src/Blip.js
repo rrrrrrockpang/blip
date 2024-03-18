@@ -358,7 +358,7 @@ function Blip() {
 
             <div className='container-fluid'>
                 <div className='row'>
-                    <div className='col-9'>
+                    <div className='col-12 col-md-9'>
                         {/* Search and Filters */}
                         <div className="row mt-4 mb-3 align-items-end">
                             <div className="col-md-3">
@@ -408,7 +408,7 @@ function Blip() {
                         {filteredCards.length === 0 && <p>No cards found.</p>}
                     </div>
 
-                    <div className='col-3'>
+                    <div className='col-12 col-md-3'>
                         {/* <div className="view-toggle">
                             <button onClick={() => setActiveView('bookmarks')} disabled={activeView === 'bookmarks'}>Bookmarks</button>
                             <button onClick={() => setActiveView('sidebar')} disabled={activeView === 'sidebar'}>Sidebar</button>

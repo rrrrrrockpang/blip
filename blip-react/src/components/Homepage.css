@@ -102,7 +102,7 @@ footer {
 }
 
 /* Media Queries for Mobile Devices */
-@media screen and (max-width: 768px) {
+@media (max-width: 768px) {
     header, section, footer {
         width: 90vw; /* Increase width for smaller screens */
         margin: 10px auto;

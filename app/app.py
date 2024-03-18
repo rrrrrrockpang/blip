@@ -1,7 +1,7 @@
 import openai
 import uvicorn
 import json
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -12,6 +12,8 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification, Text
 from helper import llmRequester
 import logging
 import os
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
 
 app = FastAPI()
 
@@ -25,6 +27,7 @@ app.add_middleware(
     allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
+    allow_credentials=True
 )
 
 model_path = "./model"
@@ -43,6 +46,12 @@ class SearchRequest(BaseModel):
     query: str
     domain: str
     aspect: str
+    
+class Message(BaseModel):
+    name: str
+    title: str
+    message: str
+    timestamp: str
 
 
 def load_token_keys(path):
@@ -218,6 +227,22 @@ templates = Jinja2Templates(directory="templates")
 @app.get("/", response_class=HTMLResponse)
 async def display(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
+
+# Replace the placeholder with your Atlas connection string
+uri = "mongodb+srv://blip-admin:SnLY3HFEPADfJjaM@cluster0.7vdeyys.mongodb.net/"
+
+# Set the Stable API version when creating a new client
+client = MongoClient(uri, server_api=ServerApi('1'))
+db = client["iui2024"]
+    
+@app.post("/create")
+async def create(message: Message):
+    if not message:
+        raise HTTPException(status_code=400, detail="No data provided")
+    message_dict = message.dict()
+    result = db["messages"].insert_one(message_dict)
+    return {"message": "Data added successfully", "data_id": str(result.inserted_id)}
+    
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=80)

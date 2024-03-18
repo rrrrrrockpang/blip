@@ -12,11 +12,37 @@ const Sidebar = ({ isOpen, onClose, content }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setCardComments(prevComments => ({
-      ...prevComments,
-      [content.title]: [...(prevComments[content.title] || []), input]
-    }));
-    setInput('');
+    
+
+    // call /create and submit the comment to the backend
+    console.log("submitting comments");
+    try {
+      fetch('http://localhost:80/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          name: content.title,
+          title: content.title,
+          message: input,
+          timestamp: new Date().toISOString()
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          setCardComments(prevComments => ({
+            ...prevComments,
+            [content.title]: [...(prevComments[content.title] || []), input]
+          }));
+          setInput('');
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   if (!isOpen) return <p>Please select a card on the left</p>;

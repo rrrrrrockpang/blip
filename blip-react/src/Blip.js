@@ -34,7 +34,6 @@ import {
 
 
 function Blip() {
-    // const navigate = useNavigate();
 
     const [cards, setCards] = useState([]); 
     const [filteredCards, setFilteredCards] = useState(cards);

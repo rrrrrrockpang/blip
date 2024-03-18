@@ -3,7 +3,7 @@ import './Toggle.css';
 
 const Toggle = ({ activeView, setActiveView }) => {
   return (
-    <div className="btn-group" role="group" aria-label="View toggle">
+    <div className="toggle-group btn-group" role="group" aria-label="View toggle">
         <button
            type="button"
            className={`btn ${activeView === 'bookmarks' ? 'btn-success' : 'btn-secondary'}`}

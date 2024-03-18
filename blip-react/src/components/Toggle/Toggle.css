@@ -7,3 +7,13 @@
   background-color: #28a745; /* Bootstrap's default success color */
   border-color: #28a745;
 }
+
+@media (max-width: 768px) {
+  .toggle-group {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+  }
+}

@@ -4,7 +4,8 @@
     padding: 0;
     background-size: cover;
     color: #333;
-    overflow-y: auto;
+    height: 100vh;
+    overflow-y: scroll;
 }
 
 .bibtex {

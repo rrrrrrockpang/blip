@@ -12,7 +12,7 @@ const HomePage = () => {
 
     return (
         <div className="homepage">
-        <header>
+        <section>
             <h1>
                 <img src={logo} alt="Icon" className="titleIcon" />
                 <span className="bibtex">Blip</span>: &nbsp; 
@@ -47,7 +47,7 @@ const HomePage = () => {
                     </div>
                 </div>
             </div>
-        </header>
+        </section>
 
         <section id="abstract">
             <h2><i className="fas fa-file-alt"></i> Abstract</h2>

@@ -2,6 +2,7 @@ import logo from '../../assets/blip.png';  // assuming you've moved blip.png to 
 import './LogoHeader.css';
 
 import { Button } from '@mantine/core';
+import { useNavigate } from 'react-router-dom';
 
 import { 
     IconPlus,
@@ -9,9 +10,19 @@ import {
 } from '@tabler/icons-react';
 
 const LogoHeader = ({openArticleModal, openContributeModal}) => {
+    const navigate = useNavigate();
+
+    const goBackToHomePage = () => {
+        navigate('/'); // Navigates back to the homepage
+    };
+
     return (
-        <header id="homepage-logo-header" className="mt-5 mb-4">
-            <div></div>
+        <header id="homepage-logo-header" className="mb-4" style={{marginTop: 20}}>
+            <button 
+                className="btn btn-outline-success d-block" 
+                onClick={goBackToHomePage}
+                style={{marginLeft: 20, top: 0, marginTop: 0}}    
+            >Back to Home</button>
             
             <div className="logo-container">
                 <img src={logo} alt="Blip Logo" className="logo-image"/>

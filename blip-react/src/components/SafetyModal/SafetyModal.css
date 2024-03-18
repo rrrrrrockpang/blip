@@ -1,29 +1,30 @@
-
-/* Popup: Styling for the popup container */
 #popup-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 2;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  position: fixed;
+  overflow-y: auto; /* Allows scrolling within the popup container */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; 
+  padding-top: 10vh; 
+  padding-bottom: 10vh; 
 }
 
 /* Styling for the popup message */
 #popup-message {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    text-align: center;
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  max-width: 90%; 
+  box-sizing: border-box;
+  overflow-y: auto; 
+  max-height: 80vh; 
 }
 
 /* Styling for the popup close button */
@@ -34,7 +35,19 @@
     border-radius: 5px;
     padding: 10px 20px;
     cursor: pointer;
+    padding: 8px 16px;
   }
+
+  @media (max-width: 768px) {
+    #popup-message {
+        padding: 15px; /* Slightly less padding on smaller screens */
+        font-size: 14px; /* Smaller font size on mobile */
+    }
+
+    #popup-close {
+        font-size: 14px; /* Smaller font size on mobile */
+    }
+}
   
   .disclaimer {
     display: flex;
@@ -47,3 +60,12 @@
     min-height: 4.4375rem;
     max-width: 50rem;
   }
+
+  @media (max-width: 768px) {
+    .disclaimer {
+        flex-direction: column;
+        padding: 0.75rem; 
+        margin: 0.75rem; 
+        gap: 0.5rem; 
+    }
+}

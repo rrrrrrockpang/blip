@@ -18,7 +18,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import Joyride from 'react-joyride';
 import WebFont from 'webfontloader';
 
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 
 
 import  {
@@ -34,8 +34,8 @@ import {
 
 
 function Blip() {
-    const navigate = useNavigate();
-    
+    // const navigate = useNavigate();
+
     const [cards, setCards] = useState([]); 
     const [filteredCards, setFilteredCards] = useState(cards);
     const [domainFilter, setDomainFilter] = useState("");
@@ -310,14 +310,8 @@ function Blip() {
     const openContributeModal = () => setContributeModalOpen(true);
     const closeContributeModal = () => setContributeModalOpen(false);
 
-    const goBackToHomePage = () => {
-        navigate('/'); // Navigates back to the homepage
-    };
-
     return (
         <div className="App">
-            <button onClick={goBackToHomePage}>Back to Home</button>
-
             {showModal && <SafetyModal onClose={handleCloseModal} />}
 
             {!showModal && (

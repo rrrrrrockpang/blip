@@ -1,5 +1,10 @@
 import { Input } from '@mantine/core';
 import { IconChevronDown } from '@tabler/icons-react';
+import  {
+    Text,
+    Button,
+} from '@mantine/core';
+import { IconMicroscope } from '@tabler/icons-react';
 
 import "./FilterDropdown.css";
 
@@ -12,10 +17,9 @@ function FilterDropdown({ label, description, options, onChange }) {
     <div style={{ textAlign: 'left' }}>
         <Input.Wrapper
                 id="input-demo"
-                label={label}
+                label={<Text><IconMicroscope size={14}/> {label}</Text>}
                 px={10}
                 description={description}
-                // description="Please enter your credit card information, we need some money"
                 >
             <Input
             component="select"

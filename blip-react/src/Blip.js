@@ -50,6 +50,7 @@ function Blip() {
     const [currentCards, setCurrentCards] = useState([]);  
     const [next, setNext] = useState(100);  
 
+    const [isJoyrideReady, setIsJoyrideReady] = useState(false);
     // joystick steps
     const [joyrideSteps, setJoyrideSteps] = useState([
         {
@@ -83,12 +84,39 @@ function Blip() {
             title: "Remove Bookmark"
         },
         {
-            target: ".accordion-section",
+            target: ".toggle-group .btn-success",
             content: "See your bookmarked cards in this section. The goal is that you can reference this in the future to help you make decisions about your own project.",
-            title: "Bookmarked Cards"
+            title: "Click to see your bookmarked cards!"
+        },
+        {
+            target: ".contribute-card-btn",
+            content: "Click here to contribute to the card by adding your own thoughts, ideas, or experiences. Edit in the sidebar!",
+            title: "Contribute"
+        },
+        {
+            target: ".toggle-group .btn-secondary",
+            content: "Share your story here. We want to hear about your experiences. Remember you need to select a card first!",
+            title: "Click to Share Your Story!"
         }
     ]);
 
+    useEffect(() => {
+        const checkTargets = () => {
+          const targets = ['#filter-Domain', '#filter-Aspect', '#search-bar'];
+          return targets.every(selector => document.querySelector(selector));
+        };
+      
+        const intervalId = setInterval(() => {
+          if (checkTargets()) {
+            setIsJoyrideReady(true);
+            clearInterval(intervalId);
+          }
+        }, 1000); // Check every 1 second
+      
+        return () => clearInterval(intervalId);
+      }, []);
+
+      
     const [isOpen, setIsOpen] = useState(false);
     const [selectedCard, setSelectedCard] = useState(null);
     const [activeView, setActiveView] = useState('bookmarks'); 
@@ -334,12 +362,12 @@ function Blip() {
                         {/* Search and Filters */}
                         <div className="row mt-4 mb-3 align-items-end">
                             <div className="col-md-3">
-                                <FilterDropdown label={<Text><IconMicroscope size={14}/> Domain</Text> } description="Which kind of technology?" options={
+                                <FilterDropdown label={"Domain"} description="Which kind of technology?" options={
                                     ['Social Media', 'Voice Assistant', 'Augmented/Virtual Reality', "Computer Vision", "Robotics", "Mobile Technology", "AI Decision-Making", "Neuroscience", "Computational Biology", "Ubiquitous Computing"]
                                 } onChange={setDomainFilter} />
                             </div>
                             <div className="col-md-3">
-                                <FilterDropdown label={<Text><IconHealthRecognition size={14}/> Aspect</Text> } description="Which aspect of life is affected?" options={
+                                <FilterDropdown label={"Aspect"} description="Which aspect of life is affected?" options={
                                     ['user experience', 'health & wellbeing', 'security & privacy', 'access to information & discourse', 'social norms & relationship', 'equality & justice', 'economy', 'politics', 'power dynamics', 'environment & sustainability']
                                 } onChange={setAspectFilter} />
                             </div>
@@ -356,7 +384,7 @@ function Blip() {
                                     variant="light"
                                     leftIcon={<IconArrowsShuffle size={15}/>}
                                     onClick={handleShuffle}
-
+                                    className='shuffle-button'
                                 >
                                     Shuffle
                                 </Button>

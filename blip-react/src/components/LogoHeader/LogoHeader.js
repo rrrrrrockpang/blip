@@ -52,7 +52,7 @@ const LogoHeader = ({openArticleModal, openContributeModal}) => {
                     mt={10}
                     mr={20}
                     leftIcon={<IconMicroscope size={15} />}
-                    onClick={openArticleModal}
+                    onClick={openContributeModal}
                 >
                     Suggest a New Domain
                 </Button>

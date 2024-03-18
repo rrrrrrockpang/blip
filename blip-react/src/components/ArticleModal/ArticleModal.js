@@ -18,7 +18,10 @@ function ArticleModal({ isOpen, closeModal }) {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://104.197.248.47:80/request", {
+      const response = await fetch(
+        // "http://104.197.248.47:80/request",
+        'http://localhost:80/request',
+      {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -55,9 +58,15 @@ function ArticleModal({ isOpen, closeModal }) {
         <br />
         <label htmlFor="domain">Domain:</label>
         <select id="domain" name="domain" value={domain} onChange={(e) => setDomain(e.target.value)}>
-          <option value="social media">social media</option>
+          {
+            ['Social Media', 'Voice Assistant', 'Augmented/Virtual Reality', "Computer Vision", "Robotics", "Mobile Technology", "AI Decision-Making", "Neuroscience", "Computational Biology", "Ubiquitous Computing"]
+              .map((option, index) => (
+                <option key={index} value={option.toLowerCase().replace(/ /g, "_")}>{option}</option>
+              ))
+          }
+          {/* <option value="social media">social media</option>
           <option value="voice assistant">voice assistant</option>
-          <option value="virtual reality">virtual reality</option>
+          <option value="virtual reality">virtual reality</option> */}
         </select>
         <br />
         <button id="submitButton" className="submit-button" onClick={submitArticle}>Submit</button>

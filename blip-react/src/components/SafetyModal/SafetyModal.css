@@ -1,6 +1,6 @@
 #popup-container {
   position: fixed;
-  overflow-y: auto; /* Allows scrolling within the popup container */
+  overflow-y: auto; 
   top: 0;
   left: 0;
   width: 100%;

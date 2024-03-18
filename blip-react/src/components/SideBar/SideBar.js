@@ -1,8 +1,89 @@
 import React, { useState } from 'react';
 import Card from '../Card/Card';
-import './SideBar.css'; // Import the CSS file here
+import './SideBar.css'; 
+import {
+  createStyles,
+  Accordion,
+  Card as MantineCard,
+  rem,
+  Text,
+  Badge,
+  Group,
+  Anchor,
+  ActionIcon,
+} from '@mantine/core';
+
+const useStyles = createStyles((theme) => ({
+  root: {
+      backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+      // borderRadius: theme.radius.sm,
+      borderTopColor: theme.colors.gray[3],
+      borderTopWidth: rem(1),
+      borderTopStyle: 'solid',
+    },
+  
+  item: {
+  backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+  border: `${rem(1)} solid transparent`,
+  borderRadius: '0px',
+  borderBottomColor: theme.colors.gray[3],
+  position: 'relative',
+  zIndex: 0,
+  transition: 'transform 150ms ease',
+
+      '&[data-active]': {
+          transform: 'scale(1.03)',
+          backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+          boxShadow: theme.shadows.md,
+          borderColor: theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[2],
+          borderRadius: theme.radius.md,
+          zIndex: 1,      
+      },
+  },
+  
+  chevron: {
+      '&[data-rotate]': {
+          transform: 'rotate(-90deg)',
+      },
+  },
+  bookmark: {
+    background: theme.colors.gray[0],
+    marginTop: rem(50),
+    position: '-webkit-sticky', /* For Safari */
+    position: 'sticky',
+    top: 0,
+    // width: '24vw',
+    // height: '90vh',
+    width: 'auto',
+    height: 'auto',
+    maxHeight: '100vh',
+    overflowY: 'auto',
+  },
+
+  title: {
+    fontFamily: 'DM Sans',
+    fontWeight: 600,
+    fontSize: '18px',
+    marginTop: '10px',
+  },
+
+  cardTitle: {
+      fontFamily: 'DM Sans',
+      fontSize: '0.85rem',
+      fontWeight: 600,
+  },
+
+  cardText: {
+      fontFamily: 'DM Sans',
+      fontSize: '0.8rem',
+      color: '#777',
+      textAlign: 'left',
+  }
+}));
 
 const Sidebar = ({ isOpen, onClose, content }) => {
+  const { classes, theme } = useStyles();
+
   const [input, setInput] = useState('');
   const [cardComments, setCardComments] = useState({});
 
@@ -54,13 +135,12 @@ const Sidebar = ({ isOpen, onClose, content }) => {
   };
 
   return (
-    <div className="sidebar" style={{ margin: 2}}>
+    // <div className="sidebar" style={{ margin: 2}}>
+    <MantineCard withBorder radius="md" className={classes.bookmark} style={{ margin: 2}}>
       {/* <button onClick={onClose} className="close-button">Close</button> */}
       <form onSubmit={handleSubmit}>
         {/* Welcome message and input field */}
-        <label htmlFor="input" style={{ display: 'block', fontWeight: 'bold' }}>
-          <h4><strong>Share Your Story</strong></h4>
-        </label>
+        <Text className={classes.title}>Share Your Story</Text>
 
         <p>
           This story might resonate with your own experiences. If it does, we'd love to hear it!
@@ -90,7 +170,8 @@ const Sidebar = ({ isOpen, onClose, content }) => {
         )}
 
       </form>
-    </div>
+    {/* </div> */}
+    </MantineCard>
   );
 };
 

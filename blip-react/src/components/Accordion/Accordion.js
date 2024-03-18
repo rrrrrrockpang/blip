@@ -66,8 +66,10 @@ const useStyles = createStyles((theme) => ({
       position: '-webkit-sticky', /* For Safari */
       position: 'sticky',
       top: 0,
-      width: '24vw',
-      height: '90vh',
+      // width: '24vw',
+      // height: '90vh',
+      width: 'auto',
+      height: 'auto',
       maxHeight: '100vh',
       overflowY: 'auto',
     },
@@ -170,85 +172,103 @@ function Bookmarks({ cardsInList, onRemove }) {
         }
       };
 
+    // const renderCardContent = (content) => {
+    //   if (!content) return <p>Please select a card on the left</p>;
+    //   if (typeof content === 'object') return <Card {...content} />;
+    //   return content;
+    // };
+
+    const renderAccordian = (content) => {
+      // if (!content) return <p>Please bookmark any cards of your interest!</p>;
+      // if (content.length === 0) return <p>Please bookmark any cards of your interest!</p>;
+      if (typeof content === 'object') {
+        return (
+                <Accordion
+                  maw={420}
+                  mx="auto"
+                  mt="xl"
+                  variant="filled"
+                  defaultValue="customization"
+                  classNames={classes}
+                  className={classes.root}>
+                {content.map((card, index) => (
+                  <Accordion.Item value={`heading${index}`}>
+                  <Accordion.Control>
+                      <Text lineClamp={2}
+                          className={classes.cardTitle}
+                      >
+                          {card.title}
+                      </Text>
+                      
+                          <Badge
+                              radius="sm"
+                              color="dark"
+                              variant="outline"
+                              size="xs"
+                              mr={3}
+                          >
+                              {condenseSector(card.sector)}
+                          </Badge>
+                          <Badge
+                              radius="sm"
+                              variant="filled"
+                              size="xs"
+                              style={{
+                                  backgroundColor: getCardHeaderColor(card.label),
+                                  color: theme.colors.dark[9],
+                              }}
+                          >
+                              {card.label}
+                          </Badge>
+                  </Accordion.Control>
+                  <Accordion.Panel style={{ textAlign: 'left' }}>
+                      <Text 
+                          className={classes.cardText}
+                          lineClamp={6}
+                      >
+                          {card.text}
+                          
+                      </Text>
+                      <Anchor href={card.url} target="_blank" mr={8} color="gray">
+                          {/* <IconExternalLink size={15} /> */}
+                          <Text 
+                          size="xs"
+                          style={{ display: 'inline-block' }}
+                          color="#aaa"
+                          mb={5}
+                          
+                          >
+                          Read More
+                          </Text>
+                      </Anchor>
+                  <div className="d-flex justify-content-between">
+                  <div className="">
+                      <ActionIcon color="yellow" variant="transparent" onClick={() => onRemove(card)} style={{ display: 'inline-block' }}>
+                          <IconBackspaceFilled size={17} />
+                      </ActionIcon>
+                  </div>
+                  <div className="">
+                      <img src={getMagazineLogo(card.magazine)} alt={`${card.magazine} logo`} height="15" />
+                  </div>
+                  </div>
+                  </Accordion.Panel>
+                  </Accordion.Item>
+                ))}
+                </Accordion>
+        );
+      }
+        return content;
+    }
+
     return (
         <MantineCard withBorder radius="md" className={classes.bookmark} style={{ margin: 2}}>
         <Text className={classes.title}>Bookmarked Articles</Text>
+        <p>Please bookmark any cards of your interest!</p>
+        
+        {renderAccordian(cardsInList)}
           
-        <Accordion
-              maw={420}
-              mx="auto"
-              mt="xl"
-              variant="filled"
-              defaultValue="customization"
-              classNames={classes}
-              className={classes.root}
-        >
-                {cardsInList.map((card, index) => (
-                    <Accordion.Item value={`heading${index}`}>
-                    <Accordion.Control>
-                        <Text lineClamp={2}
-                            className={classes.cardTitle}
-                            // fw={600}
-                        >
-                            {card.title}
-                        </Text>
-                        
-                            <Badge
-                                radius="sm"
-                                color="dark"
-                                variant="outline"
-                                size="xs"
-                                mr={3}
-                            >
-                                {condenseSector(card.sector)}
-                            </Badge>
-                            <Badge
-                                radius="sm"
-                                variant="filled"
-                                size="xs"
-                                style={{
-                                    backgroundColor: getCardHeaderColor(card.label),
-                                    color: theme.colors.dark[9],
-                                }}
-                            >
-                                {card.label}
-                            </Badge>
-                    </Accordion.Control>
-                    <Accordion.Panel style={{ textAlign: 'left' }}>
-                        <Text 
-                            className={classes.cardText}
-                            lineClamp={6}
-                        >
-                            {card.text}
-                            
-                        </Text>
-                        <Anchor href={card.url} target="_blank" mr={8} color="gray">
-                            {/* <IconExternalLink size={15} /> */}
-                            <Text 
-                            size="xs"
-                            style={{ display: 'inline-block' }}
-                            color="#aaa"
-                            mb={5}
-                            
-                            >
-                            Read More
-                            </Text>
-                        </Anchor>
-                    <div className="d-flex justify-content-between">
-                    <div className="">
-                        <ActionIcon color="yellow" variant="transparent" onClick={() => onRemove(card)} style={{ display: 'inline-block' }}>
-                            <IconBackspaceFilled size={17} />
-                        </ActionIcon>
-                    </div>
-                    <div className="">
-                        <img src={getMagazineLogo(card.magazine)} alt={`${card.magazine} logo`} height="15" />
-                    </div>
-                    </div>
-                    </Accordion.Panel>
-                    </Accordion.Item>
-                ))}
-            </Accordion>
-      </MantineCard>
+        
+        </MantineCard>
     );
 }
 

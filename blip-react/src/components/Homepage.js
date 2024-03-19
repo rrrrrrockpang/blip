@@ -7,7 +7,7 @@ const HomePage = () => {
     const navigate = useNavigate(); // Using useNavigate hook
 
     const navigateToApp = () => {
-        navigate('/app'); // Navigate to the App interface
+        navigate('/blipdemo');
     };
 
     return (

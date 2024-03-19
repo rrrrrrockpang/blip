@@ -26,6 +26,7 @@ function ContributeModal({ isOpen, closeModal }) {
                 <input type="text" id="contribute-option" name="contribute-option" value={contributeOption} onChange={(e) => setContributeOption(e.target.value)} placeholder="Enter new domain..." />
                 <div className="contribute options">
                 <label>A few options: </label>
+                <br/>
                 {['Ride-sharing apps', 'Language models', 'Live-streaming', 'Augmented reality'].map((option) => (
                     <button type="button" className="option-button" data-option={option} onClick={() => setContributeOption(option)} key={option}>
                     {option}

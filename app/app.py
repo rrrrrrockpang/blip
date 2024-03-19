@@ -224,10 +224,6 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
 
-@app.get("/", response_class=HTMLResponse)
-async def display(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
-
 # Replace the placeholder with your Atlas connection string
 uri = "mongodb+srv://blip-admin:SnLY3HFEPADfJjaM@cluster0.7vdeyys.mongodb.net/"
 

@@ -17,52 +17,60 @@ const LogoHeader = ({openArticleModal, openContributeModal}) => {
     };
 
     return (
-        <header id="homepage-logo-header" className="mb-4" style={{marginTop: 20}}>
-            <button 
-                className="btn btn-outline-success d-block" 
-                onClick={goBackToHomePage}
-                style={{marginLeft: 20, top: 0, marginTop: 0}}    
-            >Back to Home</button>
-            
-            <div className="logo-container">
-                <img src={logo} alt="Blip Logo" className="logo-image"/>
-                <div className="logo-text mt-3">
-                    A catalog of unintended, undesirable consequences of technology.
+        <header className="container-fluid" style={{margin: 0}}>
+            <div className="row">
+                <div className="col-md-2 col-sm-12">
+                    <button 
+                        className="btn btn-outline-success pt-10" 
+                        onClick={goBackToHomePage}
+                        style={{marginTop: 20}}    
+                    >Back to Home</button>
                 </div>
-            </div>
+                
+                <div className="col-md-7">
+                <div className="logo-container">
+                    <img src={logo} alt="Blip Logo" className="logo-image"/>
+                    <div className="logo-text mt-3">
+                        A catalog of unintended, undesirable consequences of technology.
+                    </div>
+                </div>
+                </div>
 
-            <div className="buttons">
-                <Button
-                    variant="filled"
-                    color="green"
-                    size="xs"
-                    radius="sm"
-                    mr={20}
-                    leftIcon={<IconPlus size={15} />}
-                    onClick={openArticleModal}
-                >
-                    Add an Article
-                </Button>
+                <div className="col-md-3 col-sm-12">
+                        <div className="row">
+                            <div className="col-12">
+                                <Button
+                                    variant="filled"
+                                    color="green"
+                                    size="xs"
+                                    radius="sm"
+                                    mr={20}
+                                    mt={20}
+                                    leftIcon={<IconPlus size={15} />}
+                                    onClick={openArticleModal}
+                                >
+                                    Add an Article
+                                </Button>
+                            </div>
+                        </div>
 
-                <Button
-                    variant="filled"
-                    color="green"
-                    size="xs"
-                    radius="sm"
-                    mt={10}
-                    mr={20}
-                    leftIcon={<IconMicroscope size={15} />}
-                    onClick={openContributeModal}
-                >
-                    Suggest a New Domain
-                </Button>
-
-                {/* <button className="contribute-button" alt="Import your own article from an URL" onClick={openArticleModal}>
-                    Import an Article
-                </button>
-                <button className="contribute-button" alt="Contribute a domain that you think is missing!" onClick={openContributeModal}>
-                    Suggest a New Domain
-                </button> */}
+                        <div className="row">
+                            <div className="col-12"> 
+                                <Button
+                                    variant="filled"
+                                    color="green"
+                                    size="xs"
+                                    radius="sm"
+                                    mt={10}
+                                    mr={20}
+                                    leftIcon={<IconMicroscope size={15} />}
+                                    onClick={openContributeModal}
+                                >
+                                    Suggest a New Domain
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
             </div>
         </header>
     );

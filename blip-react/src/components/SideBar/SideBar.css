@@ -37,6 +37,11 @@
     padding: 10px;
     border-radius: 5px;
   }
+
+  form {
+    max-height: 70vh;
+    overflow-y: auto; 
+  }
   
   .comment-box {
     margin-top: 10px;

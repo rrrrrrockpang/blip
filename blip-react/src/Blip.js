@@ -267,8 +267,7 @@ function Blip() {
         console.log("About to fetch data from FastAPI...");
         try {
             const response = await fetch(
-                'http://localhost:80/search', 
-                // "http://104.197.248.47:80/search",
+                'https://blip.labinthewild.org/api/search',
                 {
                 method: 'POST',
                 headers: {

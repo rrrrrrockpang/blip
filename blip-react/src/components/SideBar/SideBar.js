@@ -98,7 +98,9 @@ const Sidebar = ({ isOpen, onClose, content }) => {
     // call /create and submit the comment to the backend
     console.log("submitting comments");
     try {
-      fetch('http://localhost:80/create', {
+      fetch(
+        "https://blip.labinthewild.org/api/create",
+      {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

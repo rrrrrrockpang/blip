@@ -19,8 +19,7 @@ function ArticleModal({ isOpen, closeModal }) {
 
     try {
       const response = await fetch(
-        // "http://104.197.248.47:80/request",
-        'http://localhost:80/request',
+        "https://blip.labinthewild.org/api/request",
       {
         method: "POST",
         headers: {

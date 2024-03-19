@@ -30,10 +30,18 @@ const HomePage = () => {
                         </button>
                     </div>
                     <div className = "col-auto">
-                        <a href="/">
+                        <a href="https://homes.cs.washington.edu/~ypang2/blip_demo.pdf">
                             <button className="btn btn-outline-success">
                                 <i className="fas fa-file-alt"></i> &nbsp;
-                                Full Paper
+                                Demo Paper
+                            </button>
+                        </a>
+                    </div>
+                    <div className = "col-auto">
+                        <a href="https://homes.cs.washington.edu/~ypang2/blip_preprint.pdf">
+                            <button className="btn btn-outline-success">
+                                <i className="fas fa-file-alt"></i> &nbsp;
+                                Full Paper Preprint
                             </button>
                         </a>
                     </div>

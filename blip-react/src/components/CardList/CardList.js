@@ -13,7 +13,7 @@ export default function CardList({ cards, onAdd, onRemove, onContribute }) {
 
   // Filter cards that meet the criteria: non-empty and non-'none' aspect, and summary with 5 or more words
   const filteredCards = cards.filter(card => {
-    const isAspectValid = card.label || card.label.toLowerCase() !== 'none' || card.label.length > 0;
+    const isAspectValid = card.label && card.label.toLowerCase() !== 'none' && card.label.length > 0;
     const isSummaryValid = card.gpt_summary && card.gpt_summary.split(' ').length >= 5;
     return isAspectValid && isSummaryValid;
   });

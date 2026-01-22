@@ -17,6 +17,7 @@ import Toggle from './components/Toggle/Toggle';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import Joyride from 'react-joyride';
 import WebFont from 'webfontloader';
+import { createClient } from '@supabase/supabase-js';
 
 // import { useNavigate } from 'react-router-dom';
 
@@ -32,6 +33,9 @@ import {
 } from '@tabler/icons-react';
 
 
+const supabaseUrl = process.env.REACT_APP_LINK;
+const supabaseKey = process.env.REACT_APP_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 function Blip() {
 
@@ -194,14 +198,26 @@ function Blip() {
     
 
     useEffect(() => {
-        Papa.parse(DATASET, {
-        header: true,
-        download: true,
-        skipEmptyLines: true,
-        complete: (data) => {
-            setCards(shuffleArray(data.data));
+        const fetchFromSupabase = async () => {
+        try {
+            const { data, error } = await supabase
+                .from('data')  // your table name
+                .select('*');
+            if (error) {
+                console.error('Error fetching from Supabase:', error);
+                return;
+            }
+
+            const dataWithLabels = data.map(card => ({
+                ...card,
+            }));
+            const shuffled = shuffleArray(dataWithLabels);
+            setCards(shuffled);
+        } catch (err) {
+            console.error('Unexpected error:', err);
         }
-        });
+    };
+    fetchFromSupabase();
     }, []);
 
     /** Logic to add and remove cards */ 
@@ -396,6 +412,7 @@ function Blip() {
                             hasMore={hasMore}
                             scrollableTarget="scrollableDiv"
                         >
+                        {console.log("Passing to CardList:", currentCards.length, "cards. First card:", currentCards[0])}
                         <CardList 
                             cards={currentCards} 
                             onAdd={addToAccordionList} 

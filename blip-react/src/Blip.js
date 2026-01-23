@@ -1,9 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import Papa from 'papaparse';
+import { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-import DATASET from './dataset/dataset.csv';
 import CardList from './components/CardList/CardList';
 import FilterDropdown from './components/FilterDropdown/FilterDropdown';
 import LogoHeader from './components/LogoHeader/LogoHeader';
@@ -18,6 +16,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import Joyride from 'react-joyride';
 import WebFont from 'webfontloader';
 import { createClient } from '@supabase/supabase-js';
+import Fuse from 'fuse.js';
 
 // import { useNavigate } from 'react-router-dom';
 
@@ -277,73 +276,46 @@ function Blip() {
         setFilteredCards(shuffledCards);
     }
 
-    const handleSearch = async (e) => {
+    const handleSearch = (e) => {
         e.preventDefault();
 
-        console.log("About to fetch data from FastAPI...");
-        try {
-            const response = await fetch(
-                'https://blip.labinthewild.org/api/search',
-                {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ 
-                    query: searchQuery,
-                    domain: domainFilter,
-                    aspect: aspectFilter
-                })
-            });
+        console.log("Starting fuzzy search...");
 
-            if(response.ok) {
-                console.log("Received successful response");
-                const data = await response.json();
-                // Check for the "error" keyword in the JSON data
-                if (data.hasOwnProperty("error")) {
-                    console.error("Received error in response data:", data.error);
-                    return;
-                }
+        // Filter cards based on domain and aspect first
+        let searchableCards = cards.filter(card =>
+            (domainFilter ? card.sector === domainFilter : true) &&
+            (aspectFilter ? card.label === aspectFilter : true)
+        );
 
-                const { titles } = data;
-
-                if (!Array.isArray(titles)) {
-                    console.error("Received 'titles' is not an array:", titles);
-                    return;
-                }
-
-                let matchedCards = titles.map(title => {
-                    return cards.find(card => card.title === title);
-                }).filter(card => card !== undefined);  // Remove undefined entries
-    
-                let unmatchedCards = cards.filter(card => !titles.includes(card.title));
-                
-                // Apply additional filtering based on domainFilter and aspectFilter
-                const applyAdditionalFiltering = (cardList) => {
-                    if (domainFilter) {
-                        cardList = cardList.filter(card => card.sector === domainFilter);
-                    }
-                    if (aspectFilter) {
-                        cardList = cardList.filter(card => card.label === aspectFilter);
-                    }
-                    return cardList;
-                };
-    
-                matchedCards = applyAdditionalFiltering(matchedCards);
-                unmatchedCards = applyAdditionalFiltering(unmatchedCards);
-    
-                const combinedCards = [...matchedCards, ...unmatchedCards];
-
-                // Update the filteredCards state.
-                setFilteredCards(combinedCards);
-            } else {
-                console.error(`Received unsuccessful response: ${response.status} ${response.statusText}`);
-            }
-        } catch (error) {
-            console.error("Error fetching data:", error);
+        if (!searchQuery.trim()) {
+            setFilteredCards(searchableCards);
+            return;
         }
 
-        console.log("Exiting handleSearch.");
+        const fuseOptions = {
+            keys: ['gpt_summary'],
+            threshold: 0.4,
+            includeScore: true,
+            minMatchCharLength: 2,
+        };
+
+        const fuse = new Fuse(searchableCards, fuseOptions);
+        const results = fuse.search(searchQuery);
+
+        const matchedCards = results.map(result => result.item);
+
+        // Get unmatched cards (cards that weren't in search results)
+        const matchedTitles = new Set(matchedCards.map(card => card.title));
+        const unmatchedCards = searchableCards.filter(
+            card => !matchedTitles.has(card.title)
+        );
+
+        // Combine matched cards first, then unmatched
+        const combinedCards = [...matchedCards, ...unmatchedCards];
+
+        setFilteredCards(combinedCards);
+        console.log(`Found ${matchedCards.length} matches for "${searchQuery}"`);
+        console.log(matchedTitles)
     };
 
     /** Logic to open and close modals */

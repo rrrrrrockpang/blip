@@ -1,3 +1,6 @@
+import sys
+sys.dont_write_bytecode = True
+
 import logging
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, TextClassificationPipeline
 from tqdm import tqdm

@@ -1,3 +1,6 @@
+import sys
+sys.dont_write_bytecode = True
+
 import openai
 import json
 import tqdm

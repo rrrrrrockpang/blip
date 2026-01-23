@@ -1,3 +1,6 @@
+import sys
+sys.dont_write_bytecode = True
+
 from supabase import create_client
 from _1tempsqlite import TempArticleDB
 import logging

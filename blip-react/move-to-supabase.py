@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Supabase credentials
-SUPABASE_URL = os.getenv('REACT_APP_LINK') # e.g., https://abcdefgh.supabase.co
+SUPABASE_URL = os.getenv('REACT_APP_URL') # e.g., https://abcdefgh.supabase.co
 SUPABASE_KEY = os.getenv('REACT_APP_KEY')  # Your anon/service key
 TABLE_NAME = "data"  # Change if your table has a different name
 CSV_FILE_PATH = "./src/dataset/dataset.csv"  # Path to your CSV file

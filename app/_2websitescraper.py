@@ -18,7 +18,10 @@ class ArticleRequester:
         self.temp_db = temp_db
         self.current_date = datetime.now()
         self.seven_days_ago = self.current_date - timedelta(days=7)
-        self.queries = ['social media', 'voice assistants', 'virtual reality']
+        self.queries = ['social media', 'voice assistants', 'virtual reality', 
+                        'computer vision', 'robotics', 'mobile technology',
+                        'ai decision-making', 'neuroscience', 'computational biology',
+                        'ubiquitous computing']
         
     def get_article(self, article):
         """Download and parse article"""

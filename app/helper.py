@@ -1,93 +1,91 @@
-import together
-from typing import Any, Dict
-from pydantic import Extra, root_validator
-from langchain.llms.base import LLM
-from langchain.utils import get_from_dict_or_env
-from langchain import PromptTemplate, LLMChain
-import json, os
+import os
+from dotenv import load_dotenv
+from openai import OpenAI
+import logging
 
-# with open("keys.json", "r") as file:
-#     os.environ["TOGETHER_API_KEY"] = json.load(file)["TOGETHER_API_KEY"]
-#     together.api_key = os.environ["TOGETHER_API_KEY"]
-together.api_key = os.environ["TOGETHER_API_KEY"]
-
-
-class TogetherLLM(LLM):
-    """Together large language models."""
-
-    model: str = "togethercomputer/llama-2-70b-chat"
-    """model endpoint to use"""
-
-    together_api_key: str = os.environ["TOGETHER_API_KEY"]
-    """Together API key"""
-
-    temperature: float = 0.7
-    """What sampling temperature to use."""
-
-    max_tokens: int = 512
-    """The maximum number of tokens to generate in the completion."""
-
-    class Config:
-        extra = Extra.forbid
-
-    @root_validator()
-    def validate_environment(cls, values: Dict) -> Dict:
-        """Validate that the API key is set."""
-        api_key = get_from_dict_or_env(
-            values, "together_api_key", "TOGETHER_API_KEY"
-        )
-        values["together_api_key"] = api_key
-        return values
-
-    @property
-    def _llm_type(self) -> str:
-        """Return type of LLM."""
-        return "together"
-
-    def _call(
-        self,
-        prompt: str,
-        **kwargs: Any,
-    ) -> str:
-        """Call to Together endpoint."""
-        together.api_key = self.together_api_key
-        output = together.Complete.create(prompt,
-                                          model=self.model,
-                                          max_tokens=self.max_tokens,
-                                          temperature=self.temperature,
-                                          )
-        text = output['output']['choices'][0]['text']
-        return text
-
+load_dotenv()
 
 class llmRequester:
     def __init__(self):
-        self.llama = None
-        self.prompt = None
-        self.llama = self.configure_llama()
-        self.llm_chain = None
+        """Initialize the GPT client with API key from .env"""
+        self.api_key = os.getenv("GPT_KEY")
+        
+        if not self.api_key:
+            raise ValueError("GPT_KEY not found in .env file")
+        
+        self.client = OpenAI(api_key=self.api_key)
+        self.model = "gpt-4o-mini"  # or "gpt-4o" for more powerful model
+        self.temperature = 0.1
+        self.max_tokens = 512
+        
+        logging.info("GPT client initialized successfully")
     
-    def set_prompt(self, prompt):
-        self.prompt = prompt
+    def run_llama(self, prompt: str, text: str) -> str:
+        """
+        Run GPT with the given prompt and text.
+        Maintains the same interface as the original for compatibility.
+        
+        Args:
+            prompt: The prompt template with {text} placeholder
+            text: The text to insert into the prompt
+        
+        Returns:
+            The GPT response as a string
+        """
+        try:
+            # Replace the {text} placeholder in the prompt
+            full_prompt = prompt.replace("{text}", text)
+            
+            # Call OpenAI API
+            response = self.client.chat.completions.create(
+                model=self.model,
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "You are a helpful assistant that analyzes articles about technology and its societal impacts."
+                    },
+                    {
+                        "role": "user",
+                        "content": full_prompt
+                    }
+                ],
+                temperature=self.temperature,
+                max_tokens=self.max_tokens
+            )
+            
+            # Extract the response text
+            answer = response.choices[0].message.content.strip()
+            
+            return answer
+            
+        except Exception as e:
+            logging.error(f"Error calling GPT API: {e}")
+            raise
+    
+    def set_model(self, model: str):
+        """
+        Change the GPT model being used.
+        
+        Options:
+        - "gpt-4o-mini": Faster, cheaper (recommended for your use case)
+        - "gpt-4o": More powerful, more expensive
+        - "gpt-3.5-turbo": Legacy, cheapest
+        """
+        self.model = model
+        logging.info(f"Model changed to: {model}")
+    
+    def set_temperature(self, temperature: float):
+        """Set the temperature for response generation (0.0-2.0)"""
+        self.temperature = temperature
+    
+    def set_max_tokens(self, max_tokens: int):
+        """Set the maximum number of tokens in the response"""
+        self.max_tokens = max_tokens
 
-    def configure_llama(self):
-        if self.llama == None:
-            try:
-                self.llama = TogetherLLM(
-                    model= "togethercomputer/llama-2-70b-chat",
-                    temperature=0.1,
-                    max_tokens=512
-                )
-            except:
-                print("No keys.json file found. Please create one with your Together API key.")
-                self.llama = None
-        return self.llama
-    
-    def run_llama(self, prompt, text):
-        llama = self.configure_llama()
-        
-        self.prompt = PromptTemplate(template=prompt, input_variables=["text"])    
-        self.llm_chain = LLMChain(prompt=self.prompt, llm=llama)
-        answer = self.llm_chain.run(text)
-        
-        return answer
+
+# Backwards compatibility - if other code expects these classes
+class TogetherLLM:
+    """Deprecated: Use llmRequester instead"""
+    def __init__(self, *args, **kwargs):
+        logging.warning("TogetherLLM is deprecated. Use llmRequester instead.")
+        raise NotImplementedError("Please use llmRequester class instead")
